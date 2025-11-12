@@ -16,8 +16,18 @@ public class ProdutoController {
         return ProdutosUseCase.inserirProduto(produto, MethodVersion.fromValue(version));
     }
 
-//    @GetMapping("/{version}/produto/getList")
-//    public Response getListProdutos(@PathVariable String version) throws SQLException {
-//        return ProdutosUseCase.getListaProdutos(MethodVersion.fromValue(version));
-//    }
+    @GetMapping("/{version}/produto/getList")
+    public Response getListProdutos(@PathVariable String version) throws SQLException {
+        return ProdutosUseCase.getListaProdutos(MethodVersion.fromValue(version));
+    }
+
+    @GetMapping("/{version}/{id}/produto/getProduto")
+    public Response getProdutoById(@PathVariable String version, @PathVariable Integer id) throws SQLException{
+        return ProdutosUseCase.getProdutoById(id, MethodVersion.fromValue(version));
+    }
+
+    @PutMapping("/{version}/produto/update")
+    public Response updateProduto(@PathVariable String version, @RequestBody ProdutosDto produto) throws SQLException{
+        return ProdutosUseCase.updateProduto(produto, MethodVersion.fromValue(version));
+    }
 }

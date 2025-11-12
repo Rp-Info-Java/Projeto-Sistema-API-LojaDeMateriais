@@ -7,11 +7,11 @@ import java.util.List;
 
 @Repository
 public interface UsuariosDao{
-    void insert (Usuarios usuarios) throws Exception;
+    boolean insert (Usuarios usuarios) throws Exception;
 
     boolean update (Usuarios usuarios) throws Exception;
 
-    Usuarios getUsuario (Long id) throws Exception;
+    Usuarios getUsuario (Integer id) throws Exception;
 
     List<Usuarios> getListUsuarios () throws Exception;
 }

@@ -29,6 +29,21 @@ public class ProdutosDto  extends BaseDto {
         super();
     }
 
+    public ProdutosDto(Produtos produtos){
+        this.codigo = produtos.getCodigo().getValue();
+        this.descricao = produtos.getDescricao().getValue();
+        this.marca = produtos.getMarca().getValue();
+        this.grupo = produtos.getGrupo().getValue();
+        this.departamento = produtos.getDpto().getValue();
+        this.embalagem = produtos.getEmbalagem().getValue();
+        this.quantiaEmbalagem = produtos.getQembalagem().getValue();
+        this.precoVenda = produtos.getPreconvenda().getValue();
+        this.precoCompra = produtos.getPrecocompra().getValue();
+        this.estoque = produtos.getEstoque().getValue();
+        this.dataUltimaCompra = produtos.getDtultcompra().getValue();
+        this.dataUltimaVenda = produtos.getDtultvenda().getValue();
+    }
+
     public Produtos toEntity(){
         Produtos produto = new Produtos(false);
         produto.getCodigo().setValue(this.getCodigo());

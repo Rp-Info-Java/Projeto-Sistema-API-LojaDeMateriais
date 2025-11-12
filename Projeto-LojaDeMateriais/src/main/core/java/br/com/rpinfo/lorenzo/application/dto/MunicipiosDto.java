@@ -25,7 +25,7 @@ public class MunicipiosDto  extends BaseDto {
     }
 
     public Municipios toEntity(){
-        Municipios municipio = new Municipios();
+        Municipios municipio = new Municipios(false);
         municipio.getCodigo().setValue(this.getCodigo());
         municipio.getNome().setValue(this.getNome());
         municipio.getUf().setValue(this.getUnidadeFederativa());

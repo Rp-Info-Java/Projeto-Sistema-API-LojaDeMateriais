@@ -23,16 +23,28 @@ public class MovProdutosDetDto extends BaseDto {
         super();
     }
 
+    public MovProdutosDetDto(MovProdutosD mvpd){
+        this.transacao = mvpd.getTransacao().getValue();
+        this.status = mvpd.getStatus().getValue();
+        this.codigoProduto = mvpd.getProd_codigo().getValue();
+        this.quantidade = mvpd.getQtde().getValue();
+        this.valorDesc = mvpd.getValordesc().getValue();
+        this.valorAcrescimo = mvpd.getValoracres().getValue();
+        this.valorOutros = mvpd.getValoroutros().getValue();
+        this.valorTotal = mvpd.getValortotal().getValue();
+    }
+
     public MovProdutosD toEntity(){
         MovProdutosD mvpd = new MovProdutosD();
-        mvpd.setTransacao(this.transacao);
-        mvpd.setStatus(this.status);
-        mvpd.setProd_codigo(this.codigoProduto);
-        mvpd.setQtde(this.quantidade);
-        mvpd.setValordesc(this.valorDesc);
-        mvpd.setValoracres(this.valorAcrescimo);
-        mvpd.setValoroutros(this.valorOutros);
-        mvpd.setValortotal(this.valorTotal);
+
+        mvpd.getTransacao().setValue(this.getTransacao());
+        mvpd.getStatus().setValue(this.getStatus());
+        mvpd.getProd_codigo().setValue(this.getCodigoProduto());
+        mvpd.getQtde().setValue(this.getQuantidade());
+        mvpd.getValordesc().setValue(this.getValorDesc());
+        mvpd.getValoracres().setValue(this.getValorAcrescimo());
+        mvpd.getValoroutros().setValue(this.getValorOutros());
+        mvpd.getValortotal().setValue(this.getValorTotal());
         return mvpd;
     }
 }

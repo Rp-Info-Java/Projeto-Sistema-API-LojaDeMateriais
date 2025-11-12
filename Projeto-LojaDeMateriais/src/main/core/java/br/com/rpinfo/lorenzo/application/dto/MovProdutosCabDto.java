@@ -6,6 +6,8 @@ import lombok.Setter;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.BaseDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class MovProdutosCabDto extends BaseDto {
@@ -27,26 +29,45 @@ public class MovProdutosCabDto extends BaseDto {
     private Double totalAcrescimo;
     private Double totalOutros;
     private Double totalDocumento;
+    private List<MovProdutosDetDto> itens;
 
     public MovProdutosCabDto(){
         super();
     }
 
+    public MovProdutosCabDto(MovProdutosC mvpc){
+        this.transacao = mvpc.getTransacao().getValue();
+        this.numeroDocumento = mvpc.getNumdcto().getValue();
+        this.dataMovimento = mvpc.getDatamvto().getValue();
+        this.status = mvpc.getStatus().getValue();
+        this.entradaSaida = mvpc.getEs().getValue();
+        this.tipoEntidade = mvpc.getTipoentidade().getValue();
+        this.codigoEntidade = mvpc.getCodentidade().getValue();
+        this.codigoVendedor = mvpc.getVend_codigo().getValue();
+        this.totalProdutos = mvpc.getTotalprod().getValue();
+        this.totalDesc = mvpc.getTotaldesc().getValue();
+        this.totalAcrescimo = mvpc.getTotalacres().getValue();
+        this.totalOutros = mvpc.getTotaloutros().getValue();
+        this.totalDocumento = mvpc.getTotaldcto().getValue();
+        this.itens = mvpc.getItens().stream().map(MovProdutosDetDto::new).toList();
+    }
+
     public MovProdutosC toEntity(){
-        MovProdutosC mvpc = new MovProdutosC();
-        mvpc.setTransacao(this.transacao);
-        mvpc.setNumdcto(this.numeroDocumento);
-        mvpc.setDatamvto(this.dataMovimento);
-        mvpc.setStatus(this.status);
-        mvpc.setEs(this.entradaSaida);
-        mvpc.setTipoentidade(this.tipoEntidade);
-        mvpc.setCodentidade(this.codigoEntidade);
-        mvpc.setVend_condigo(this.codigoVendedor);
-        mvpc.setTotalprod(this.totalProdutos);
-        mvpc.setTotaldesc(this.totalDesc);
-        mvpc.setTotalacres(this.totalAcrescimo);
-        mvpc.setTotaloutros(this.totalOutros);
-        mvpc.setTotaldcto(this.totalDocumento);
+        MovProdutosC mvpc = new MovProdutosC(false);
+        mvpc.getTransacao().setValue(this.getTransacao());
+        mvpc.getNumdcto().setValue(this.getNumeroDocumento());
+        mvpc.getDatamvto().setValue(this.getDataMovimento());
+        mvpc.getStatus().setValue(this.getStatus());
+        mvpc.getEs().setValue(this.getEntradaSaida());
+        mvpc.getTipoentidade().setValue(this.getTipoEntidade());
+        mvpc.getCodentidade().setValue(this.getCodigoEntidade());
+        mvpc.getVend_codigo().setValue(this.getCodigoVendedor());
+        mvpc.getTotalprod().setValue(this.getTotalProdutos());
+        mvpc.getTotaldesc().setValue(this.getTotalDesc());
+        mvpc.getTotalacres().setValue(this.getTotalAcrescimo());
+        mvpc.getTotaloutros().setValue(this.getTotalOutros());
+        mvpc.getTotaldcto().setValue(this.getTotalDocumento());
+        mvpc.setItens(this.itens.stream().map(MovProdutosDetDto::toEntity).toList());
         return mvpc;
     }
 }

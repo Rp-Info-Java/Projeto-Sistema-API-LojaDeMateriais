@@ -2,7 +2,6 @@ package main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos;
 
 import br.framework.classes.DataBase.*;
 import br.framework.interfaces.IConnection;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Cliente;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Produtos;
 
 import java.sql.ResultSet;
@@ -34,6 +33,16 @@ public class ProdutoDaoImp extends Repository implements ProdutoDao {
     }
 
     @Override
+    public List<Produtos> getListProdutos() throws Exception {
+        QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                .select("*")
+                .from(Produtos.class)
+                .orderBy("prod_codigo");
+
+        return this.getManager().queryFactory(sql.build(), Produtos.class);
+    }
+
+    @Override
     public boolean insertProduto(Produtos produto) throws Exception {
         produto.getCodigo().setValue(this.getNextCode());
         produto.toInsert();
@@ -59,16 +68,38 @@ public class ProdutoDaoImp extends Repository implements ProdutoDao {
 
     @Override
     public boolean update(Produtos produto) throws Exception {
+        produto.toUpdate("prod_codigo = " + produto.getCodigo().getValue());
+        Transaction transaction = null;
+        try {
+            transaction = this.getConnection().getTransaction();
+            transaction.addEntity(produto);
+            if (transaction.commit()) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
         return false;
     }
 
     @Override
-    public Produtos getProduto(Long id) throws Exception {
-        return null;
-    }
+    public Produtos getProduto(Integer id) throws Exception {
+        QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                .select("*")
+                .from(Produtos.class)
+                .where("prod_codigo", "=", id);
 
-    @Override
-    public List<Produtos> getListProdutos() throws Exception {
-        return List.of();
+        List<Produtos> prodList = this.getManager().queryFactory(sql.build(), Produtos.class);
+        if(!prodList.isEmpty()){
+            return prodList.get(0);
+        }
+        return null;
     }
 }

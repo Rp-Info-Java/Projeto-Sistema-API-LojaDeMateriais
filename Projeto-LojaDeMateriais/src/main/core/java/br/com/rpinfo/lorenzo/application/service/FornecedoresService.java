@@ -3,10 +3,10 @@ package main.core.java.br.com.rpinfo.lorenzo.application.service;
 import br.framework.interfaces.IConnection;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.FornecedoresDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Cliente;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Fornecedores;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
@@ -26,7 +26,8 @@ public class FornecedoresService extends ServiceBase{
             }
             Fornecedores forn = fornDto.toEntity();
             if ((forn.getCpfcnpj() != null) && (forn.getSituacao() != null) && (forn.getNome() != null) && (forn.getTipo() != null)) {
-                if (forn.getCpfcnpj().getValue().length() == 11 || forn.getCpfcnpj().getValue().length() == 14) {
+                if (DocumentoUtils.validarTamanhoCpfCnpj(forn.getCpfcnpj().getValue()) && DocumentoUtils.validarTipo(forn.getTipo().getValue())
+                        && DocumentoUtils.validarSituacao(forn.getSituacao().getValue())) {
                     if (this.verificaCpfcnpj(forn.getCpfcnpj().getValue())) {
                         if(this.dao.insert(forn)){
                             return true;
@@ -61,10 +62,14 @@ public class FornecedoresService extends ServiceBase{
         try {
             if (forn != null) {
                 if (Strings.isNotEmpty(fornDto.getSituacao())) {
-                    forn.getSituacao().setValue(fornDto.getSituacao());
+                    if(DocumentoUtils.validarSituacao(fornDto.getSituacao())){
+                        forn.getSituacao().setValue(fornDto.getSituacao());
+                    }
                 }
                 if (Strings.isNotEmpty(fornDto.getTipo())) {
-                    forn.getTipo().setValue(fornDto.getTipo());
+                    if(DocumentoUtils.validarTipo(fornDto.getTipo())){
+                        forn.getTipo().setValue(fornDto.getTipo());
+                    }
                 }
                 if (Strings.isNotEmpty(fornDto.getRua())) {
                     forn.getRua().setValue(fornDto.getRua());

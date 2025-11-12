@@ -12,7 +12,7 @@ public interface ProdutoDao{
 
     boolean update (Produtos produto) throws Exception;
 
-    Produtos getProduto (Long id) throws Exception;
+    Produtos getProduto (Integer id) throws Exception;
 
     List<Produtos> getListProdutos () throws Exception;
 }

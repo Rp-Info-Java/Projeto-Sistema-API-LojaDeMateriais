@@ -29,19 +29,53 @@ public class ProdutosUseCase extends ProdutosService {
         }
     }
 
-//    public static Response getListaProdutos(MethodVersion methodVersion) throws SQLException {
-//        IConnection connection = null;
-//        ProdutosService business;
-//        try {
-//            connection = ConnectionManager.newConnection();
-//            business = new ProdutosService(connection);
-//            return ResponseHandler.ok(business.getListProdutos(), methodVersion);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Erro ao buscar lista de produtos: " + e.getMessage());
-//        } finally{
-//            if(connection != null){
-//                connection.close();
-//            }
-//        }
-//    }
+    public static Response getListaProdutos(MethodVersion methodVersion) throws SQLException {
+        IConnection connection = null;
+        ProdutosService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new ProdutosService(connection);
+            return ResponseHandler.ok(business.getListProdutos(), methodVersion);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao buscar lista de produtos: " + e.getMessage());
+        } finally{
+            if(connection != null){
+                connection.close();
+            }
+        }
+    }
+
+    public static Response getProdutoById(Integer id, MethodVersion methodVersion) throws SQLException {
+        IConnection connection = null;
+        ProdutosService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new ProdutosService(connection);
+            return ResponseHandler.ok(business.getProduto(id), methodVersion);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao buscar produto pelo ID: " + e.getMessage());
+        } finally{
+            if(connection != null){
+                connection.close();
+            }
+        }
+    }
+
+    public static Response updateProduto(ProdutosDto prodDto, MethodVersion methodVersion) throws SQLException {
+        IConnection connection = null;
+        ProdutosService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new ProdutosService(connection);
+            return ResponseHandler.ok(business.atualizarProduto(prodDto), methodVersion);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao buscar produto pelo ID: " + e.getMessage());
+        } finally{
+            if(connection != null){
+                connection.close();
+            }
+        }
+    }
+
+
 }

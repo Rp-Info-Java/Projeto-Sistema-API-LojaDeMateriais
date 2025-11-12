@@ -7,11 +7,11 @@ import java.util.List;
 
 @Repository
 public interface VendedoresDao{
-    void insert (Vendedores produto) throws Exception;
+    boolean insert (Vendedores vendedor) throws Exception;
 
-    boolean update (Vendedores produto) throws Exception;
+    boolean update (Vendedores vendedor) throws Exception;
 
-    Vendedores getVendedor (Long id) throws Exception;
+    Vendedores getVendedor (Integer id) throws Exception;
 
     List<Vendedores> getListVendedores () throws Exception;
 }

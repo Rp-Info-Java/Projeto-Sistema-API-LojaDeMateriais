@@ -6,6 +6,7 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationExceptio
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Cliente;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.cliente.ClienteDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.cliente.ClienteDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
@@ -25,10 +26,11 @@ public class ClienteService extends ServiceBase {
                 throw new ValidationException("Os dados do cliente são nulos.");
             }
             Cliente cliente = clienteDto.toEntity();
-            if ((cliente.getCpfcnpj() != null) && (cliente.getSituacao() != null) && (cliente.getNome() != null) && (cliente.getTipo() != null)) {
-                if (cliente.getCpfcnpj().getValue().length() == 11 || cliente.getCpfcnpj().getValue().length() == 14) {
+            if ((cliente.getCpfcnpj() != null) && (cliente.getNome() != null)){
+                if (DocumentoUtils.validarTamanhoCpfCnpj(cliente.getCpfcnpj().getValue()) && (DocumentoUtils.validarSituacao(cliente.getSituacao().getValue())
+                        && (DocumentoUtils.validarTipo(cliente.getTipo().getValue())))){
                     if (this.verificaCpfcnpj(cliente.getCpfcnpj().getValue())) {
-                        if(this.dao.insertCliente(cliente)){
+                        if (this.dao.insertCliente(cliente)) {
                             return true;
                         }
                     }
@@ -45,10 +47,14 @@ public class ClienteService extends ServiceBase {
         try {
             if (clie != null) {
                 if (Strings.isNotEmpty(clienteDto.getSituacao())) {
-                    clie.getSituacao().setValue(clienteDto.getSituacao());
+                    if (DocumentoUtils.validarSituacao(clienteDto.getSituacao())) {
+                        clie.getSituacao().setValue(clienteDto.getSituacao());
+                    }
                 }
                 if (Strings.isNotEmpty(clienteDto.getTipo())) {
-                    clie.getTipo().setValue(clienteDto.getTipo());
+                    if (DocumentoUtils.validarTipo(clienteDto.getTipo())) {
+                        clie.getTipo().setValue(clienteDto.getTipo());
+                    }
                 }
                 if (Strings.isNotEmpty(clienteDto.getRua())) {
                     clie.getRua().setValue(clienteDto.getRua());
@@ -71,7 +77,7 @@ public class ClienteService extends ServiceBase {
                 if (Strings.isNotEmpty(clienteDto.getTelefone())) {
                     clie.getFone().setValue(clienteDto.getTelefone());
                 }
-                if(this.dao.updateCliente(clie)) {
+                if (this.dao.updateCliente(clie)) {
                     return true;
                 }
             }
@@ -93,7 +99,7 @@ public class ClienteService extends ServiceBase {
     public ClienteDto getClienteById(Integer id) throws Exception {
         Cliente cliente = this.dao.getCliente(id);
 
-        if(cliente != null){
+        if (cliente != null) {
             return cliente.toDto();
         }
 
