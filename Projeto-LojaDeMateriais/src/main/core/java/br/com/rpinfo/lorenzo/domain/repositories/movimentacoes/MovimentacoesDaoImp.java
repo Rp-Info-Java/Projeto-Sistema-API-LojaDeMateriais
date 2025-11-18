@@ -32,6 +32,30 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
     }
 
     @Override
+    public MovProdutosC getMovimentacaoC(String transaction) throws Exception {
+        QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                .select("*")
+                .from(MovProdutosC.class)
+                .where("mvpc_transacao", "=", transaction);
+
+        List<MovProdutosC> list = this.getManager().queryFactory(sql, MovProdutosC.class);
+        if(!list.isEmpty()){
+            return list.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public List<MovProdutosD> getMovimentacaoD(String transaction) throws Exception {
+        QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                .select("*")
+                .from(MovProdutosD.class)
+                .where("mvpd_transacao", "=", transaction);
+
+        return this.getManager().queryFactory(sql.build(), MovProdutosD.class);
+    }
+
+    @Override
     public boolean insertEntradas(MovProdutosC mvpc) throws Exception {
         String transacao = this.getNextTransaction();
 
@@ -60,16 +84,15 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
     }
 
     @Override
-    public boolean insertSaidas(MovProdutosC mvpc) throws Exception {
-        String transacao = this.getNextTransaction();
-        mvpc.getTransacao().setValue(transacao);
-        mvpc.toInsert();
+    public boolean insertSaidas(MovProdutosC mvpc, String transacao) throws Exception {
+        mvpc.toUpdate("mvpc_transacao = '" + transacao + "'");
         Transaction transaction = null;
         try {
             transaction = this.getConnection().getTransaction();
             transaction.addEntity(mvpc);
             transaction.addEntities((List<IEntityClass>) (List<?>) mvpc.getItens());
-            if (transaction.commit()) {
+
+            if(transaction.commit()){
                 return true;
             }
         } catch (Exception e) {
@@ -86,12 +109,47 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
     }
 
     @Override
-    public boolean cancelaMovimentacao(Long id) throws Exception {
+    public boolean cancelaMovimentacao(MovProdutosC mvpc) throws Exception {
+        mvpc.toUpdate("mvpc_transacao = '" + mvpc.getTransacao().getValue() + "'");
+        Transaction transaction = null;
+        try {
+            transaction = this.getConnection().getTransaction();
+            transaction.addEntity(mvpc);
+            transaction.addEntities((List<IEntityClass>) (List<?>) mvpc.getItens());
+
+            if(transaction.commit()){
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
         return false;
     }
 
     @Override
     public List<MovProdutosC> getListMovimentacoesC() throws Exception {
-        return List.of();
+        QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                .select("*")
+                .from(MovProdutosC.class)
+                .orderBy("mvpc_transacao");
+
+        return this.getManager().queryFactory(sql.build(), MovProdutosC.class);
+    }
+
+    @Override
+    public List<MovProdutosD> getListMovimentacoesD() throws Exception {
+        QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                .select("*")
+                .from(MovProdutosD.class)
+                .orderBy("mvpd_transacao");
+
+        return this.getManager().queryFactory(sql.build(), MovProdutosD.class);
     }
 }

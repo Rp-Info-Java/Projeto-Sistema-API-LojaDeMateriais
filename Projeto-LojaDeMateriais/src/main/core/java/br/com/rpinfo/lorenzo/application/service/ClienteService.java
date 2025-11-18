@@ -1,13 +1,13 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.service;
 
 import br.framework.interfaces.IConnection;
+import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ClienteDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Cliente;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.cliente.ClienteDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.cliente.ClienteDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
-import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
 
@@ -46,35 +46,35 @@ public class ClienteService extends ServiceBase {
         Cliente clie = this.dao.getCliente(clienteDto.getCodigo());
         try {
             if (clie != null) {
-                if (Strings.isNotEmpty(clienteDto.getSituacao())) {
+                if (Strings.isNullOrEmpty(clienteDto.getSituacao())) {
                     if (DocumentoUtils.validarSituacao(clienteDto.getSituacao())) {
                         clie.getSituacao().setValue(clienteDto.getSituacao());
                     }
                 }
-                if (Strings.isNotEmpty(clienteDto.getTipo())) {
+                if (Strings.isNullOrEmpty(clienteDto.getTipo())) {
                     if (DocumentoUtils.validarTipo(clienteDto.getTipo())) {
                         clie.getTipo().setValue(clienteDto.getTipo());
                     }
                 }
-                if (Strings.isNotEmpty(clienteDto.getRua())) {
+                if (Strings.isNullOrEmpty(clienteDto.getRua())) {
                     clie.getRua().setValue(clienteDto.getRua());
                 }
-                if (Strings.isNotEmpty(clienteDto.getBairro())) {
+                if (Strings.isNullOrEmpty(clienteDto.getBairro())) {
                     clie.getBairro().setValue(clienteDto.getBairro());
                 }
-                if (Strings.isNotEmpty(clienteDto.getNumero())) {
+                if (Strings.isNullOrEmpty(clienteDto.getNumero())) {
                     clie.getNumero().setValue(clienteDto.getNumero());
                 }
-                if (Strings.isNotEmpty(clienteDto.getCep())) {
+                if (Strings.isNullOrEmpty(clienteDto.getCep())) {
                     clie.getCep().setValue(clienteDto.getCep());
                 }
                 if (clienteDto.getCodigoMunicipio() != null) {
                     clie.getMuni_codigo().setValue(clienteDto.getCodigoMunicipio());
                 }
-                if (Strings.isNotEmpty(clienteDto.getNomeMunicipio())) {
+                if (Strings.isNullOrEmpty(clienteDto.getNomeMunicipio())) {
                     clie.getMuni_nome().setValue(clienteDto.getNomeMunicipio());
                 }
-                if (Strings.isNotEmpty(clienteDto.getTelefone())) {
+                if (Strings.isNullOrEmpty(clienteDto.getTelefone())) {
                     clie.getFone().setValue(clienteDto.getTelefone());
                 }
                 if (this.dao.updateCliente(clie)) {

@@ -17,4 +17,14 @@ public class MovProdutosController {
     public Response insertSaidas(@PathVariable String version, @RequestBody MovProdutosCabDto mvpcDto) throws Exception {
         return MovProdutoUseCase.insertSaidas(mvpcDto, MethodVersion.fromValue(version));
     }
+
+    @GetMapping("/{version}/movimentacoes/getListMovimentacoesC")
+    public Response getListMovimentacoesC(@PathVariable String version) throws Exception {
+        return MovProdutoUseCase.getListMovimentacoesC(MethodVersion.fromValue(version));
+    }
+
+    @PutMapping("/{version}/{transaction}/movimentacoes/cancelarMovimentacao")
+    public Response cancelarMovimentacao(@PathVariable String version, @PathVariable String transaction) throws Exception {
+        return MovProdutoUseCase.cancelarMovimentacao(transaction, MethodVersion.fromValue(version));
+    }
 }

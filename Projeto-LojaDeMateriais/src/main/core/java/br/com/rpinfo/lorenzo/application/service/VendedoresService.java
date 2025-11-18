@@ -1,11 +1,11 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.service;
 
 import br.framework.interfaces.IConnection;
+import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.VendedoresDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Vendedores;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDaoImp;
-import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
 
@@ -58,7 +58,7 @@ public class VendedoresService extends ServiceBase {
         Vendedores vendedor = this.dao.getVendedor(vendedorDto.getCodigo());
         try{
             if(vendedor != null){
-                if(Strings.isNotEmpty(vendedorDto.getNome())){
+                if(Strings.isNullOrEmpty(vendedorDto.getNome())){
                     vendedor.getNome().setValue(vendedorDto.getNome());
                 }
                 if(vendedorDto.getComissao() != null){

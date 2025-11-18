@@ -1,12 +1,12 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.service;
 
 import br.framework.interfaces.IConnection;
+import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MunicipiosDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Municipios;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.municipios.MunicipiosDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.municipios.MunicipiosDaoImp;
-import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
 
@@ -37,10 +37,10 @@ public class MunicipioService extends ServiceBase{
         Municipios muni = this.dao.getMunicipio(municipios.getCodigo());
         try{
             if(muni != null){
-                if(Strings.isNotEmpty(municipios.getNome())){
+                if(Strings.isNullOrEmpty(municipios.getNome())){
                     muni.getNome().setValue(municipios.getNome());
                 }
-                if(Strings.isNotEmpty(municipios.getUnidadeFederativa())){
+                if(Strings.isNullOrEmpty(municipios.getUnidadeFederativa())){
                     muni.getUf().setValue(municipios.getUnidadeFederativa());
                 }
                 if(this.dao.update(muni)){

@@ -1,13 +1,13 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.service;
 
 import br.framework.interfaces.IConnection;
+import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.FornecedoresDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Fornecedores;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
-import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
 
@@ -61,35 +61,35 @@ public class FornecedoresService extends ServiceBase{
         Fornecedores forn = this.dao.getFornecedor(fornDto.getCodigo());
         try {
             if (forn != null) {
-                if (Strings.isNotEmpty(fornDto.getSituacao())) {
+                if (Strings.isNullOrEmpty(fornDto.getSituacao())) {
                     if(DocumentoUtils.validarSituacao(fornDto.getSituacao())){
                         forn.getSituacao().setValue(fornDto.getSituacao());
                     }
                 }
-                if (Strings.isNotEmpty(fornDto.getTipo())) {
+                if (Strings.isNullOrEmpty(fornDto.getTipo())) {
                     if(DocumentoUtils.validarTipo(fornDto.getTipo())){
                         forn.getTipo().setValue(fornDto.getTipo());
                     }
                 }
-                if (Strings.isNotEmpty(fornDto.getRua())) {
+                if (Strings.isNullOrEmpty(fornDto.getRua())) {
                     forn.getRua().setValue(fornDto.getRua());
                 }
-                if (Strings.isNotEmpty(fornDto.getBairro())) {
+                if (Strings.isNullOrEmpty(fornDto.getBairro())) {
                     forn.getBairro().setValue(fornDto.getBairro());
                 }
-                if (Strings.isNotEmpty(fornDto.getNumero())) {
+                if (Strings.isNullOrEmpty(fornDto.getNumero())) {
                     forn.getNumero().setValue(fornDto.getNumero());
                 }
-                if (Strings.isNotEmpty(fornDto.getCep())) {
+                if (Strings.isNullOrEmpty(fornDto.getCep())) {
                     forn.getCep().setValue(fornDto.getCep());
                 }
                 if (fornDto.getCodigoMunicipio() != null) {
                     forn.getMuni_codigo().setValue(fornDto.getCodigoMunicipio());
                 }
-                if (Strings.isNotEmpty(fornDto.getNomeMunicipio())) {
+                if (Strings.isNullOrEmpty(fornDto.getNomeMunicipio())) {
                     forn.getMuni_nome().setValue(fornDto.getNomeMunicipio());
                 }
-                if (Strings.isNotEmpty(fornDto.getTelefone())) {
+                if (Strings.isNullOrEmpty(fornDto.getTelefone())) {
                     forn.getFone().setValue(fornDto.getTelefone());
                 }
                 if(this.dao.update(forn)) {

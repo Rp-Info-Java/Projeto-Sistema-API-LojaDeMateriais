@@ -1,13 +1,13 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.service;
 
 import br.framework.interfaces.IConnection;
+import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ProdutosDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Produtos;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Data;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDaoImp;
-import org.apache.logging.log4j.util.Strings;
 
 import java.util.Date;
 import java.util.List;
@@ -71,10 +71,10 @@ public class ProdutosService extends ServiceBase {
 
         try {
             if (prod != null) {
-                if (Strings.isNotEmpty(prodDto.getDepartamento())) {
+                if (Strings.isNullOrEmpty(prodDto.getDepartamento())) {
                     prod.getDpto().setValue(prodDto.getDepartamento());
                 }
-                if (Strings.isNotEmpty(prodDto.getEmbalagem())) {
+                if (Strings.isNullOrEmpty(prodDto.getEmbalagem())) {
                     prod.getEmbalagem().setValue(prodDto.getEmbalagem());
                 }
                 if (prodDto.getQuantiaEmbalagem() >= 0) {

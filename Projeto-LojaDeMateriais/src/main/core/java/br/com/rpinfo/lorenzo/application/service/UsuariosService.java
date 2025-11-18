@@ -1,12 +1,12 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.service;
 
 import br.framework.interfaces.IConnection;
+import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.UsuariosDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Usuarios;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.usuarios.UsuariosDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.usuarios.UsuariosDaoImp;
-import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
 
@@ -48,22 +48,22 @@ public class UsuariosService extends ServiceBase {
         Usuarios usua = this.dao.getUsuario(usuariosDto.getCodigo());
         try {
             if (usua != null) {
-                if (Strings.isNotEmpty(usuariosDto.getNome())){
+                if (Strings.isNullOrEmpty(usuariosDto.getNome())){
                     usua.getNome().setValue(usuariosDto.getNome());
                 }
-                if(Strings.isNotEmpty(usuariosDto.getCadastros())){
+                if(Strings.isNullOrEmpty(usuariosDto.getCadastros())){
                     usua.getCadastros().setValue(usuariosDto.getCadastros());
                 }
-                if(Strings.isNotEmpty(usuariosDto.getEntradas())){
+                if(Strings.isNullOrEmpty(usuariosDto.getEntradas())){
                     usua.getEntradas().setValue(usuariosDto.getEntradas());
                 }
-                if(Strings.isNotEmpty(usuariosDto.getSaidas())){
+                if(Strings.isNullOrEmpty(usuariosDto.getSaidas())){
                     usua.getCancel().setValue(usuariosDto.getCancelado());
                 }
-                if(Strings.isNotEmpty(usuariosDto.getRelatorio())){
+                if(Strings.isNullOrEmpty(usuariosDto.getRelatorio())){
                     usua.getRelat().setValue(usuariosDto.getRelatorio());
                 }
-                if(Strings.isNotEmpty(usuariosDto.getConfiguracoes())){
+                if(Strings.isNullOrEmpty(usuariosDto.getConfiguracoes())){
                     usua.getConfig().setValue(usuariosDto.getConfiguracoes());
                 }
                 if(this.dao.update(usua)){

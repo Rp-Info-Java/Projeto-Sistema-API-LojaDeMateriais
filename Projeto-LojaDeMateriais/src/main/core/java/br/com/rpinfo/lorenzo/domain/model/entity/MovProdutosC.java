@@ -36,22 +36,22 @@ public class MovProdutosC extends EntityClass implements Serializable {
     public MovProdutosC(){ super(); }
 
     public MovProdutosC(Boolean autoEnableFields) { super(); }
-
-    /*public MovProdutosCabDto toDto(){
-        MovProdutosCabDto dto = new MovProdutosCabDto();
-        dto.setTransacao(this.getTransacao().getValue());
-        dto.setNumeroDocumento(this.getNumdcto().getValue());
-        dto.setDataMovimento(this.getDatamvto().getValue());
-        dto.setStatus(this.getStatus().getValue());
-        dto.setEntradaSaida(this.getEs().getValue());
-        dto.setTipoEntidade(this.getTipoentidade().getValue());
-        dto.setCodigoEntidade(this.getCodentidade().getValue());
-        dto.setCodigoVendedor(this.getVend_condigo().getValue());
-        dto.setTotalProdutos(this.getTotalprod().getValue());
-        dto.setTotalDesc(this.getTotaldesc().getValue());
-        dto.setTotalAcrescimo(this.getTotalacres().getValue());
-        dto.setTotalOutros(this.getTotaloutros().getValue());
-        dto.setTotalDocumento(this.getTotaldcto().getValue());
-        return dto;
-    }*/
+//
+//    public MovProdutosCabDto toDto(){
+//        MovProdutosCabDto dto = new MovProdutosCabDto();
+//        dto.setTransacao(this.getTransacao().getValue());
+//        dto.setNumeroDocumento(this.getNumdcto().getValue());
+//        dto.setDataMovimento(this.getDatamvto().getValue());
+//        dto.setStatus(this.getStatus().getValue());
+//        dto.setEntradaSaida(this.getEs().getValue());
+//        dto.setTipoEntidade(this.getTipoentidade().getValue());
+//        dto.setCodigoEntidade(this.getCodentidade().getValue());
+//        dto.setCodigoVendedor(this.getVend_codigo().getValue());
+//        dto.setTotalProdutos(this.getTotalprod().getValue());
+//        dto.setTotalDesc(this.getTotaldesc().getValue());
+//        dto.setTotalAcrescimo(this.getTotalacres().getValue());
+//        dto.setTotalOutros(this.getTotaloutros().getValue());
+//        dto.setTotalDocumento(this.getTotaldcto().getValue());
+//        return dto;
+//    }
 }

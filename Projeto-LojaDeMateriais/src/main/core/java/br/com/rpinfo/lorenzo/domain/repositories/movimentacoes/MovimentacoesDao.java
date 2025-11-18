@@ -11,9 +11,15 @@ public interface MovimentacoesDao {
 
     boolean insertEntradas (MovProdutosC mvpc) throws Exception;
 
-    boolean insertSaidas (MovProdutosC mvpc) throws Exception;
+    boolean insertSaidas (MovProdutosC mvpc, String transacao) throws Exception;
 
-    boolean cancelaMovimentacao(Long id) throws Exception;
+    boolean cancelaMovimentacao(MovProdutosC mvpc) throws Exception;
+
+    MovProdutosC getMovimentacaoC(String transaction) throws Exception;
+
+    List<MovProdutosD> getMovimentacaoD(String transaction) throws Exception;
 
     List<MovProdutosC> getListMovimentacoesC () throws Exception;
+
+    List<MovProdutosD> getListMovimentacoesD() throws Exception;
 }
