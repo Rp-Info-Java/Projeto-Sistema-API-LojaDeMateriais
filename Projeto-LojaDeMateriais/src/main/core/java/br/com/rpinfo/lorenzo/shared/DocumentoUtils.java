@@ -4,14 +4,14 @@ public final class DocumentoUtils {
     private DocumentoUtils() {}
 
     public static boolean validarTipo(String tipo){
-        if(tipo.equals("F") || tipo.equals("J")){
+        if(("F").equals(tipo) || ("J").equals(tipo)){
             return true;
         }
         return false;
     }
 
     public static boolean validarSituacao(String situacao){
-        if(situacao.equals("N") || situacao.equals("I")){
+        if(("N").equals(situacao) || ("I").equals(situacao)){
             return true;
         }
         return false;
@@ -23,4 +23,12 @@ public final class DocumentoUtils {
         }
         return false;
     }
+
+    public static boolean validarCamposConfig(String campo){
+        if(("S").equals(campo) || ("N").equals(campo)){
+            return true;
+        }
+        return false;
+    }
+
 }

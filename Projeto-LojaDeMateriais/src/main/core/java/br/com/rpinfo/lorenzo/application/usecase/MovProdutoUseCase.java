@@ -3,8 +3,11 @@ package main.core.java.br.com.rpinfo.lorenzo.application.usecase;
 import br.framework.interfaces.IConnection;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.Response;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.ResponseHandler;
+import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
+import main.core.java.br.com.rpinfo.lorenzo.application.service.ConfiguracoesService;
 import main.core.java.br.com.rpinfo.lorenzo.application.service.MovProdutoService;
+import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Configuracoes;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.enums.MethodVersion;
 import main.core.java.br.com.rpinfo.lorenzo.infrastructure.datasource.db.ConnectionManager;
 
@@ -18,7 +21,8 @@ public class MovProdutoUseCase extends MovProdutoService {
         try {
             connection = ConnectionManager.newConnection();
             business = new MovProdutoService(connection);
-            return ResponseHandler.ok(business.adicionarEntradas(mvpcDto), methodVersion);
+            ConfiguracoesDto configDto = new ConfiguracoesService(connection).getConfiguracaoById(Integer.valueOf(mvpcDto.getNumeroDocumento()));
+            return ResponseHandler.ok(business.adicionarEntradas(mvpcDto, configDto), methodVersion);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao inserir entradas na movimentação: " + e.getMessage());
         } finally{
@@ -34,7 +38,8 @@ public class MovProdutoUseCase extends MovProdutoService {
         try {
             connection = ConnectionManager.newConnection();
             business = new MovProdutoService(connection);
-            return ResponseHandler.ok(business.adicionarSaidas(mvpcDto), methodVersion);
+            ConfiguracoesDto configDto = new ConfiguracoesService(connection).getConfiguracaoById(Integer.valueOf(mvpcDto.getNumeroDocumento()));
+            return ResponseHandler.ok(business.adicionarSaidas(mvpcDto, configDto), methodVersion);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao inserir saidas na movimentação: " + e.getMessage());
         } finally{
