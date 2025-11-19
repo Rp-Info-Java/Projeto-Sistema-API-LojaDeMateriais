@@ -3,6 +3,7 @@ package main.core.java.br.com.rpinfo.lorenzo.application.service;
 import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
+import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosDetDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosD;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDao;
@@ -34,6 +35,8 @@ public class MovProdutoService extends ServiceBase {
                 mvpc.setItens(listD);
                 mvpc.getStatus().setValue("N");             //N ou C, sempre seta "N"
                 mvpc.getEs().setValue("E");                 //E ou S, sempre seta "E" em adicionarEntradas
+
+                this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue());
                 return this.dao.insertEntradas(mvpc);
             }
 
@@ -44,8 +47,9 @@ public class MovProdutoService extends ServiceBase {
     }
 
     public boolean adicionarSaidas(MovProdutosCabDto mvpcDto) throws Exception {
-        MovProdutosC mvpc = this.dao.getMovimentacaoC(mvpcDto.getTransacao());
-        List<MovProdutosD> listaMovD = this.dao.getMovimentacaoD(mvpc.getTransacao().getValue());
+//        MovProdutosC mvpc = this.dao.getMovimentacaoC(mvpcDto.getTransacao());
+        MovProdutosC mvpc = mvpcDto.toEntity();
+
         int i = 0;
 
         try {
@@ -92,19 +96,29 @@ public class MovProdutoService extends ServiceBase {
                     mvpc.getTotaldcto().setValue(mvpcDto.getTotalDocumento());
                 }
 
-                for (MovProdutosD item : listaMovD) {
-                    if (!this.validarStatus(item.getStatus().getValue())) {
-                        return false;
-                    }
-                    if (item.getProd_codigo() != null && item.getQtde() != null && item.getValordesc() != null
-                            && item.getValoracres() != null && item.getValoroutros() != null && item.getValortotal() != null) {
-                        item.toUpdate("mvpd_transacao = '" + mvpc.getTransacao() + "'");
-                        listaMovD.set(i, item);
-                    }
-                    i++;
-                }
+//                for (MovProdutosD item : listaMovD) {
+//                    MovProdutosDetDto produto2 = mvpcDto.getItens().stream().filter(p -> p.getCodigoProduto().equals(item.getProd_codigo().getValue())).findFirst().orElse(null);
+//
+//                    if(produto2 != null){
+//                        item.getQtde().setValue(produto2.getQuantidade());
+//                        item.getValordesc().setValue(produto2.getValorDesc());
+//                        item.getValoracres().setValue(produto2.getValorAcrescimo());
+//                        item.getValoroutros().setValue(produto2.getValorOutros());
+//                        item.getValortotal().setValue(produto2.getValorTotal());
+//                    }
+//                    if (!this.validarStatus(item.getStatus().getValue())) {
+//                        return false;
+//                    }
+//                    if (item.getProd_codigo() != null && item.getQtde() != null && item.getValordesc() != null
+//                            && item.getValoracres() != null && item.getValoroutros() != null && item.getValortotal() != null) {
+//                        item.toUpdate("mvpd_transacao = '" + mvpc.getTransacao() + "'");
+//                        listaMovD.set(i, item);
+//                    }
+//                    i++;
+//                }
                 mvpc.getEs().setValue("S");                 //sempre seta "S" em adicionarSaidas
-                mvpc.setItens(listaMovD);
+
+                this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue());
                 return this.dao.insertSaidas(mvpc, mvpc.getTransacao().getValue());
             }
             return false;
@@ -152,6 +166,28 @@ public class MovProdutoService extends ServiceBase {
             return list.stream().map(MovProdutosCabDto::new).toList();
         }
         return null;
+    }
+
+    public boolean atualizarEstoque(List<MovProdutosD> listaProdutos, String entSaida) throws Exception{
+        ProdutosService prodServ = new ProdutosService(getConnection());
+
+        if (listaProdutos.isEmpty()) {
+            return false;
+        }
+        for (MovProdutosD mvpd : listaProdutos) {
+            Double qtd = mvpd.getQtde().getValue();
+
+            if ("S".equalsIgnoreCase(entSaida)) {
+                qtd = qtd * (-1);
+            }
+
+            try {
+                prodServ.atualizarEstoque(mvpd.getProd_codigo().getValue(), qtd);
+            } catch (Exception e) {
+                throw new Exception("Falha na atualização do estoque para o produto: " + mvpd.getProd_codigo(), e);
+            }
+        }
+        return true;
     }
 
     public boolean validarStatus(String status) {

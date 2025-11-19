@@ -99,6 +99,15 @@ public class ProdutosService extends ServiceBase {
         return false;
     }
 
+    public boolean atualizarEstoque(Integer id, Double qtd) throws Exception {
+        Produtos prod = this.dao.getProduto(id);
+
+        if(prod != null){
+            prod.getEstoque().setValue(prod.getEstoque().getValue() + qtd);
+        }
+        return this.dao.update(prod);
+    }
+
     public boolean verificaEmbalagem(String embalagem){
         if(embalagem.equals("UN") || embalagem.equals("CX") || embalagem.equals("SC")
                 || embalagem.equals("PC") || embalagem.equals("MT")){
