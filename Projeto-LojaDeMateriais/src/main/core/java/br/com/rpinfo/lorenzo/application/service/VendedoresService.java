@@ -58,7 +58,7 @@ public class VendedoresService extends ServiceBase {
         Vendedores vendedor = this.dao.getVendedor(vendedorDto.getCodigo());
         try{
             if(vendedor != null){
-                if(Strings.isNullOrEmpty(vendedorDto.getNome())){
+                if(!Strings.isNullOrEmpty(vendedorDto.getNome())){
                     vendedor.getNome().setValue(vendedorDto.getNome());
                 }
                 if(vendedorDto.getComissao() != null){

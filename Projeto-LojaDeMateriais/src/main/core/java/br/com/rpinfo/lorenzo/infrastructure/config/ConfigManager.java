@@ -39,6 +39,7 @@ public class ConfigManager {
 //        this.loadConfigDefault(configuration);
         DataBaseProperties properties = configuration.getDataBase();
         this.loadDataBase(properties);
+        this.loadConfigGeral(configuration);
         configuration.setDataBase(properties);
     }
 
@@ -147,5 +148,10 @@ public class ConfigManager {
 
     private String loadStringVariable(String envPath, String propertyPath, String defaultValue) {
         return loadStringVariable(envPath, propertyPath, false, defaultValue);
+    }
+
+    private void loadConfigGeral(Configuration configuration) throws ValidationException {
+        Integer user = loadIntegerVariable("USUARIO_CODIGO", "usuario.codigo", 0);
+        configuration.setUsuarioCodigo(user);
     }
 }

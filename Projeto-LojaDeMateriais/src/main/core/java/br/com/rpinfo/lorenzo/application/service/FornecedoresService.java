@@ -61,35 +61,35 @@ public class FornecedoresService extends ServiceBase{
         Fornecedores forn = this.dao.getFornecedor(fornDto.getCodigo());
         try {
             if (forn != null) {
-                if (Strings.isNullOrEmpty(fornDto.getSituacao())) {
+                if (!Strings.isNullOrEmpty(fornDto.getSituacao())) {
                     if(DocumentoUtils.validarSituacao(fornDto.getSituacao())){
                         forn.getSituacao().setValue(fornDto.getSituacao());
                     }
                 }
-                if (Strings.isNullOrEmpty(fornDto.getTipo())) {
+                if (!Strings.isNullOrEmpty(fornDto.getTipo())) {
                     if(DocumentoUtils.validarTipo(fornDto.getTipo())){
                         forn.getTipo().setValue(fornDto.getTipo());
                     }
                 }
-                if (Strings.isNullOrEmpty(fornDto.getRua())) {
+                if (!Strings.isNullOrEmpty(fornDto.getRua())) {
                     forn.getRua().setValue(fornDto.getRua());
                 }
-                if (Strings.isNullOrEmpty(fornDto.getBairro())) {
+                if (!Strings.isNullOrEmpty(fornDto.getBairro())) {
                     forn.getBairro().setValue(fornDto.getBairro());
                 }
-                if (Strings.isNullOrEmpty(fornDto.getNumero())) {
+                if (!Strings.isNullOrEmpty(fornDto.getNumero())) {
                     forn.getNumero().setValue(fornDto.getNumero());
                 }
-                if (Strings.isNullOrEmpty(fornDto.getCep())) {
+                if (!Strings.isNullOrEmpty(fornDto.getCep())) {
                     forn.getCep().setValue(fornDto.getCep());
                 }
                 if (fornDto.getCodigoMunicipio() != null) {
                     forn.getMuni_codigo().setValue(fornDto.getCodigoMunicipio());
                 }
-                if (Strings.isNullOrEmpty(fornDto.getNomeMunicipio())) {
+                if (!Strings.isNullOrEmpty(fornDto.getNomeMunicipio())) {
                     forn.getMuni_nome().setValue(fornDto.getNomeMunicipio());
                 }
-                if (Strings.isNullOrEmpty(fornDto.getTelefone())) {
+                if (!Strings.isNullOrEmpty(fornDto.getTelefone())) {
                     forn.getFone().setValue(fornDto.getTelefone());
                 }
                 if(this.dao.update(forn)) {

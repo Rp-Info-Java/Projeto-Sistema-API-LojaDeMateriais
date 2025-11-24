@@ -7,6 +7,7 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationExceptio
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Usuarios;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.usuarios.UsuariosDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.usuarios.UsuariosDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.util.List;
 
@@ -25,6 +26,10 @@ public class UsuariosService extends ServiceBase {
 
     public UsuariosDto getUsuarioById(Integer id) throws Exception {
         return this.dao.getUsuario(id).toDto();
+    }
+
+    public Usuarios getUsuarioEntityById(Integer id) throws Exception {
+        return this.dao.getUsuario(id);
     }
 
     public boolean adicionarUsuario(UsuariosDto usuariosDto) throws Exception {
@@ -48,24 +53,25 @@ public class UsuariosService extends ServiceBase {
         Usuarios usua = this.dao.getUsuario(usuariosDto.getCodigo());
         try {
             if (usua != null) {
-                if (Strings.isNullOrEmpty(usuariosDto.getNome())){
+                if (!Strings.isNullOrEmpty(usuariosDto.getNome())){
                     usua.getNome().setValue(usuariosDto.getNome());
                 }
-                if(Strings.isNullOrEmpty(usuariosDto.getCadastros())){
+                if(!Strings.isNullOrEmpty(usuariosDto.getCadastros())){
                     usua.getCadastros().setValue(usuariosDto.getCadastros());
                 }
-                if(Strings.isNullOrEmpty(usuariosDto.getEntradas())){
+                if(!Strings.isNullOrEmpty(usuariosDto.getEntradas())){
                     usua.getEntradas().setValue(usuariosDto.getEntradas());
                 }
-                if(Strings.isNullOrEmpty(usuariosDto.getSaidas())){
+                if(!Strings.isNullOrEmpty(usuariosDto.getSaidas())){
                     usua.getCancel().setValue(usuariosDto.getCancelado());
                 }
-                if(Strings.isNullOrEmpty(usuariosDto.getRelatorio())){
+                if(!Strings.isNullOrEmpty(usuariosDto.getRelatorio())){
                     usua.getRelat().setValue(usuariosDto.getRelatorio());
                 }
-                if(Strings.isNullOrEmpty(usuariosDto.getConfiguracoes())){
+                if(!Strings.isNullOrEmpty(usuariosDto.getConfiguracoes())){
                     usua.getConfig().setValue(usuariosDto.getConfiguracoes());
                 }
+                DocumentoUtils.gravaLog(this.getConnection(), 6, "Atualização de usuário");
                 if(this.dao.update(usua)){
                     return true;
                 }

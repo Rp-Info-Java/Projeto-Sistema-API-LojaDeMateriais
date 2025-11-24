@@ -8,7 +8,9 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import lombok.Setter;
+import main.core.java.br.com.rpinfo.lorenzo.application.service.UsuariosService;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
+import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Usuarios;
 import main.core.java.br.com.rpinfo.lorenzo.infrastructure.config.Configuration;
 
 import java.sql.SQLException;
@@ -20,6 +22,9 @@ public class ConnectionManager {
     @Getter
     @Setter
     private ConnectionEventHandler eventHandler;
+    @Getter
+    @Setter
+    private Usuarios usuario;
 
     public ConnectionManager() throws SQLException {
         this.buildAttributes();
@@ -40,11 +45,12 @@ public class ConnectionManager {
         }
     }
 
-    public static IConnection newConnection() throws SQLException, ValidationException {
+    public static IConnection newConnection() throws SQLException, ValidationException, Exception {
         IConnection connection = null;
         IConnection.ConnectionEvents eventHandler = new ConnectionEventHandler(new RestDbCommandListener());
         ConnectionManager manager = ConnectionManager.getInstance();
         connection = manager.factory(eventHandler);
+        manager.setUsuario(new UsuariosService(connection).getUsuarioEntityById(Configuration.getInstance().getUsuarioCodigo()));
         return connection;
     }
 

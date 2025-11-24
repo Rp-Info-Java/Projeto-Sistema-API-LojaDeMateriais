@@ -31,6 +31,7 @@ public class UsuariosUseCase extends UsuariosService {
         try {
             connection = ConnectionManager.newConnection();
             UsuariosService business = new UsuariosService(connection);
+            ConnectionManager.getInstance().getUsuario();
             return ResponseHandler.ok(business.getListUsuarios(), methodVersion);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao buscar lista de usuarios: " + e.getMessage());

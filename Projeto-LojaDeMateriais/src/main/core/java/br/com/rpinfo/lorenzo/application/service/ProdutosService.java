@@ -71,10 +71,10 @@ public class ProdutosService extends ServiceBase {
 
         try {
             if (prod != null) {
-                if (Strings.isNullOrEmpty(prodDto.getDepartamento())) {
+                if (!Strings.isNullOrEmpty(prodDto.getDepartamento())) {
                     prod.getDpto().setValue(prodDto.getDepartamento());
                 }
-                if (Strings.isNullOrEmpty(prodDto.getEmbalagem())) {
+                if (!Strings.isNullOrEmpty(prodDto.getEmbalagem())) {
                     prod.getEmbalagem().setValue(prodDto.getEmbalagem());
                 }
                 if (prodDto.getQuantiaEmbalagem() >= 0) {

@@ -17,6 +17,8 @@ public class Configuration {
     private Integer httpsPort;
     private String path;
     private DataBaseProperties dataBase;
+    private Integer usuarioCodigo;
+    private Integer configuracaoCodigo;
 
     public Configuration() {
         this.dataBase = new DataBaseProperties("", "", "", "");
@@ -24,6 +26,8 @@ public class Configuration {
         this.path = null;
         this.httpPort = null;
         this.httpsPort = null;
+        this.usuarioCodigo = 0;
+        this.configuracaoCodigo = 0;
     }
 
     public static void build(String path) throws ValidationException {

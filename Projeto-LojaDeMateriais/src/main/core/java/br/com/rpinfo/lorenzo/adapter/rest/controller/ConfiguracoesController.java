@@ -24,4 +24,9 @@ public class ConfiguracoesController {
     public Response getConfiguracaoById(@PathVariable String version, @PathVariable Integer id) throws SQLException{
         return ConfiguracoesUseCase.getConfiguracao(id, MethodVersion.fromValue(version));
     }
+
+    @PutMapping("/{version}/configuracoes/update")
+    public Response updateConfiguracao(@PathVariable String version, @RequestBody ConfiguracoesDto config) throws SQLException{
+        return ConfiguracoesUseCase.updateConfig(config, MethodVersion.fromValue(version));
+    }
 }

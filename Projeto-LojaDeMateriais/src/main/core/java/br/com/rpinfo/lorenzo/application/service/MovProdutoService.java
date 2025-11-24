@@ -4,7 +4,6 @@ import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Configuracoes;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosD;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDao;
@@ -56,20 +55,20 @@ public class MovProdutoService extends ServiceBase {
         try {
             if (validarSaida(config)) {
                 if (mvpc != null) {
-                    if (Strings.isNullOrEmpty(mvpcDto.getNumeroDocumento())) {
+                    if (!Strings.isNullOrEmpty(mvpcDto.getNumeroDocumento())) {
                         mvpc.getNumdcto().setValue(mvpcDto.getNumeroDocumento());
                     }
-                    if (Strings.isNullOrEmpty(mvpcDto.getDataMovimento())) {
+                    if (!Strings.isNullOrEmpty(mvpcDto.getDataMovimento())) {
                         mvpc.getDatamvto().setValue(mvpcDto.getDataMovimento());
                     }
-                    if (Strings.isNullOrEmpty(mvpcDto.getStatus())) {
+                    if (!Strings.isNullOrEmpty(mvpcDto.getStatus())) {
                         if (this.validarStatus(mvpc.getStatus().getValue())) {
                             mvpc.getStatus().setValue(mvpcDto.getStatus());
                         } else {
                             return false;
                         }
                     }
-                    if (Strings.isNullOrEmpty(mvpcDto.getTipoEntidade())) {
+                    if (!Strings.isNullOrEmpty(mvpcDto.getTipoEntidade())) {
                         if (this.validarTipoEntidade(mvpc)) {
                             mvpc.getTipoentidade().setValue(mvpcDto.getTipoEntidade());
                         } else {

@@ -46,35 +46,35 @@ public class ClienteService extends ServiceBase {
         Cliente clie = this.dao.getCliente(clienteDto.getCodigo());
         try {
             if (clie != null) {
-                if (Strings.isNullOrEmpty(clienteDto.getSituacao())) {
+                if (!Strings.isNullOrEmpty(clienteDto.getSituacao())) {
                     if (DocumentoUtils.validarSituacao(clienteDto.getSituacao())) {
                         clie.getSituacao().setValue(clienteDto.getSituacao());
                     }
                 }
-                if (Strings.isNullOrEmpty(clienteDto.getTipo())) {
+                if (!Strings.isNullOrEmpty(clienteDto.getTipo())) {
                     if (DocumentoUtils.validarTipo(clienteDto.getTipo())) {
                         clie.getTipo().setValue(clienteDto.getTipo());
                     }
                 }
-                if (Strings.isNullOrEmpty(clienteDto.getRua())) {
+                if (!Strings.isNullOrEmpty(clienteDto.getRua())) {
                     clie.getRua().setValue(clienteDto.getRua());
                 }
-                if (Strings.isNullOrEmpty(clienteDto.getBairro())) {
+                if (!Strings.isNullOrEmpty(clienteDto.getBairro())) {
                     clie.getBairro().setValue(clienteDto.getBairro());
                 }
-                if (Strings.isNullOrEmpty(clienteDto.getNumero())) {
+                if (!Strings.isNullOrEmpty(clienteDto.getNumero())) {
                     clie.getNumero().setValue(clienteDto.getNumero());
                 }
-                if (Strings.isNullOrEmpty(clienteDto.getCep())) {
+                if (!Strings.isNullOrEmpty(clienteDto.getCep())) {
                     clie.getCep().setValue(clienteDto.getCep());
                 }
                 if (clienteDto.getCodigoMunicipio() != null) {
                     clie.getMuni_codigo().setValue(clienteDto.getCodigoMunicipio());
                 }
-                if (Strings.isNullOrEmpty(clienteDto.getNomeMunicipio())) {
+                if (!Strings.isNullOrEmpty(clienteDto.getNomeMunicipio())) {
                     clie.getMuni_nome().setValue(clienteDto.getNomeMunicipio());
                 }
-                if (Strings.isNullOrEmpty(clienteDto.getTelefone())) {
+                if (!Strings.isNullOrEmpty(clienteDto.getTelefone())) {
                     clie.getFone().setValue(clienteDto.getTelefone());
                 }
                 if (this.dao.updateCliente(clie)) {

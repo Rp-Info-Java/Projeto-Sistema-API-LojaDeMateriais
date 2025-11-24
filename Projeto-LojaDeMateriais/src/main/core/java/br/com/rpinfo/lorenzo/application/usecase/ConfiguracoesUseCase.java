@@ -62,4 +62,20 @@ public class ConfiguracoesUseCase extends ConfiguracoesService {
             }
         }
     }
+
+    public static Response updateConfig(ConfiguracoesDto configDto, MethodVersion methodVersion) throws SQLException {
+        IConnection connection = null;
+        ConfiguracoesService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new ConfiguracoesService(connection);
+            return ResponseHandler.ok(business.atualizarConfiguracoes(configDto), methodVersion);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar a configuração selecionada: " + e.getMessage());
+        } finally{
+            if(connection != null){
+                connection.close();
+            }
+        }
+    }
 }

@@ -37,10 +37,10 @@ public class MunicipioService extends ServiceBase{
         Municipios muni = this.dao.getMunicipio(municipios.getCodigo());
         try{
             if(muni != null){
-                if(Strings.isNullOrEmpty(municipios.getNome())){
+                if(!Strings.isNullOrEmpty(municipios.getNome())){
                     muni.getNome().setValue(municipios.getNome());
                 }
-                if(Strings.isNullOrEmpty(municipios.getUnidadeFederativa())){
+                if(!Strings.isNullOrEmpty(municipios.getUnidadeFederativa())){
                     muni.getUf().setValue(municipios.getUnidadeFederativa());
                 }
                 if(this.dao.update(muni)){
