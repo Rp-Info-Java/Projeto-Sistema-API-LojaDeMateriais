@@ -8,6 +8,7 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosD;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.util.List;
 
@@ -38,8 +39,10 @@ public class MovProdutoService extends ServiceBase {
 
                 mvpc = this.validarConfiguracao(mvpc, config);
 
-                this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue());
-                return this.dao.insertEntradas(mvpc);
+                if(this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue())){
+                    DocumentoUtils.gravaLog(this.getConnection(), 50, "Gravação de movimentação");
+                    return this.dao.insertEntradas(mvpc);
+                }
             }
 
             return false;
@@ -118,6 +121,8 @@ public class MovProdutoService extends ServiceBase {
 
                     mvpc = this.validarConfiguracao(mvpc, config);
 
+                    DocumentoUtils.gravaLog(this.getConnection(), 51, "Edição de movimentação (Saídas)");
+
                     this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue());
                     return this.dao.insertSaidas(mvpc, mvpc.getTransacao().getValue());
                 }
@@ -144,6 +149,9 @@ public class MovProdutoService extends ServiceBase {
                     i++;
                 }
                 mvpc.setItens(listD);
+
+                DocumentoUtils.gravaLog(this.getConnection(), 51, "Cancelamento de movimentação");
+
                 return this.dao.cancelaMovimentacao(mvpc);
             }
             return false;
@@ -162,6 +170,8 @@ public class MovProdutoService extends ServiceBase {
                     mvpc.setItens(listMovD.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
                 });
             }
+
+            DocumentoUtils.gravaLog(this.getConnection(), 52, "Consulta de movimentações");
             return list.stream().map(MovProdutosCabDto::new).toList();
         }
         return null;

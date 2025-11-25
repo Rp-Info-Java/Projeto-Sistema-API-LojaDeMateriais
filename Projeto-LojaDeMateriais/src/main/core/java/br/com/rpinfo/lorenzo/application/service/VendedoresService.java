@@ -6,6 +6,7 @@ import main.core.java.br.com.rpinfo.lorenzo.application.dto.VendedoresDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Vendedores;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class VendedoresService extends ServiceBase {
             Vendedores vendedor = vendedorDto.toEntity();
             if (vendedor.getNome().getValue() != null) {
                 if(this.dao.insert(vendedor)){
+                    DocumentoUtils.gravaLog(this.getConnection(), 90, "Gravação de vendedor");
                     return true;
                 }
             }
@@ -39,6 +41,7 @@ public class VendedoresService extends ServiceBase {
         List<Vendedores> vend = this.dao.getListVendedores();
 
         if (!vend.isEmpty()) {
+            DocumentoUtils.gravaLog(this.getConnection(), 92, "Consulta de vendedores");
             return vend.stream().map(VendedoresDto::new).toList();
         }
         return null;
@@ -48,6 +51,7 @@ public class VendedoresService extends ServiceBase {
         Vendedores vendedor = this.dao.getVendedor(id);
 
         if(vendedor != null){
+            DocumentoUtils.gravaLog(this.getConnection(), 92, "Consulta de vendedor");
             return vendedor.toDto();
         }
 
@@ -65,6 +69,7 @@ public class VendedoresService extends ServiceBase {
                     vendedor.getComissao().setValue(vendedorDto.getComissao());
                 }
                 if(this.dao.update(vendedor)){
+                    DocumentoUtils.gravaLog(this.getConnection(), 91, "Edição de dados de vendedor");
                     return true;
                 }
             }

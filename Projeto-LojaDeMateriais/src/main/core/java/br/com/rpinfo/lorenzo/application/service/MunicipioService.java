@@ -7,6 +7,7 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationExceptio
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Municipios;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.municipios.MunicipiosDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.municipios.MunicipiosDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class MunicipioService extends ServiceBase{
             }
             Municipios municipios = municipiosDto.toEntity();
             if(this.dao.insert(municipios)){
+                DocumentoUtils.gravaLog(this.getConnection(), 80, "Gravação de Município");
                 return true;
             }
         }catch(Exception e){
@@ -44,6 +46,7 @@ public class MunicipioService extends ServiceBase{
                     muni.getUf().setValue(municipios.getUnidadeFederativa());
                 }
                 if(this.dao.update(muni)){
+                    DocumentoUtils.gravaLog(this.getConnection(), 81, "Edição de Município");
                     return true;
                 }
             }
@@ -57,6 +60,7 @@ public class MunicipioService extends ServiceBase{
         Municipios muni = this.dao.getMunicipio(id);
 
         if(muni != null){
+            DocumentoUtils.gravaLog(this.getConnection(), 82, "Consulta de Município por ID");
             return muni.toDto();
         }
 
@@ -67,6 +71,7 @@ public class MunicipioService extends ServiceBase{
         List<Municipios> municipios = this.dao.getListMunicipios();
 
         if(!municipios.isEmpty()){
+            DocumentoUtils.gravaLog(this.getConnection(), 82, "Consulta de Municípios");
             return municipios.stream().map(MunicipiosDto::new).toList();
         }
 
@@ -77,6 +82,7 @@ public class MunicipioService extends ServiceBase{
         List<Municipios> municipios = this.dao.getListMunicipiosByUf(uf);
 
         if(!municipios.isEmpty()){
+            DocumentoUtils.gravaLog(this.getConnection(), 82, "Consulta de Municípios por UF");
             return municipios.stream().map(MunicipiosDto::new).toList();
         }
 

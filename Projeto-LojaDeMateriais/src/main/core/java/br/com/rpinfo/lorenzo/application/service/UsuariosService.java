@@ -21,14 +21,17 @@ public class UsuariosService extends ServiceBase {
     }
 
     public List<UsuariosDto> getListUsuarios() throws Exception {
+        DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuários");
         return this.dao.getListUsuarios().stream().map(UsuariosDto::new).toList();
     }
 
     public UsuariosDto getUsuarioById(Integer id) throws Exception {
+        DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuário por ID - DTO");
         return this.dao.getUsuario(id).toDto();
     }
 
     public Usuarios getUsuarioEntityById(Integer id) throws Exception {
+        DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuários por ID");
         return this.dao.getUsuario(id);
     }
 
@@ -40,6 +43,7 @@ public class UsuariosService extends ServiceBase {
             Usuarios usuarios = usuariosDto.toEntity();
             if (usuarios.getNome().getValue() != null) {
                 if (this.dao.insert(usuarios)) {
+                    DocumentoUtils.gravaLog(this.getConnection(), 60, "Gravação de usuário");
                     return true;
                 }
             }
@@ -73,6 +77,7 @@ public class UsuariosService extends ServiceBase {
                 }
                 DocumentoUtils.gravaLog(this.getConnection(), 6, "Atualização de usuário");
                 if(this.dao.update(usua)){
+                    DocumentoUtils.gravaLog(this.getConnection(), 61, "Atualização de dados do usuário");
                     return true;
                 }
             }

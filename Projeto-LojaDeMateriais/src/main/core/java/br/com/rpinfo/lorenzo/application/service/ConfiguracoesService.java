@@ -27,6 +27,7 @@ public class ConfiguracoesService extends ServiceBase {
             Configuracoes config = configDto.toEntity();
             if (DocumentoUtils.validarCamposConfig(config.getValidasaidas().getValue()) && DocumentoUtils.validarCamposConfig(config.getValidafornec().getValue()) && DocumentoUtils.validarCamposConfig(config.getValidacliente().getValue())) {
                 if (this.dao.insertConfiguracao(config)) {
+                    DocumentoUtils.gravaLog(this.getConnection(), 10, "Gravação de configuração");
                     return true;
                 }
             }
@@ -40,6 +41,7 @@ public class ConfiguracoesService extends ServiceBase {
         List<Configuracoes> listConfiguracoes = this.dao.getListConfiguracoes();
 
         if (!listConfiguracoes.isEmpty()) {
+            DocumentoUtils.gravaLog(this.getConnection(), 12, "Consulta de configurações");
             return listConfiguracoes.stream().map(ConfiguracoesDto::new).toList();
         }
         return null;
@@ -49,6 +51,7 @@ public class ConfiguracoesService extends ServiceBase {
         Configuracoes config = this.dao.getConfiguracao(id);
         try {
             if (config != null) {
+                DocumentoUtils.gravaLog(this.getConnection(), 12, "Consulta de configurações");
                 return config.toDto();
             }
             return null;
@@ -82,8 +85,8 @@ public class ConfiguracoesService extends ServiceBase {
                 if (configDto.getPercentualDescontos() != null) {
                     config.getPercdescontos().setValue(configDto.getPercentualDescontos());
                 }
-                DocumentoUtils.gravaLog(this.getConnection(), 1,);
                 if (this.dao.updateConfiguracoes(config)) {
+                    DocumentoUtils.gravaLog(this.getConnection(), 11, "Edição de configuração");
                     return true;
                 }
             }

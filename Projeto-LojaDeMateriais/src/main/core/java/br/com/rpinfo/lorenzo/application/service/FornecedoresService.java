@@ -30,6 +30,7 @@ public class FornecedoresService extends ServiceBase{
                         && DocumentoUtils.validarSituacao(forn.getSituacao().getValue())) {
                     if (this.verificaCpfcnpj(forn.getCpfcnpj().getValue())) {
                         if(this.dao.insert(forn)){
+                            DocumentoUtils.gravaLog(this.getConnection(), 30, "Gravação de fornecedor");
                             return true;
                         }
                     }
@@ -50,10 +51,12 @@ public class FornecedoresService extends ServiceBase{
     }
 
     public List<FornecedoresDto> getListFornecedores() throws Exception {
+        DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedores");
         return this.dao.getListFornecedores().stream().map(FornecedoresDto::new).toList();
     }
 
     public FornecedoresDto getFornecedorById(Integer id) throws Exception{
+        DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedor");
         return this.dao.getFornecedor(id).toDto();
     }
 
@@ -93,6 +96,7 @@ public class FornecedoresService extends ServiceBase{
                     forn.getFone().setValue(fornDto.getTelefone());
                 }
                 if(this.dao.update(forn)) {
+                    DocumentoUtils.gravaLog(this.getConnection(), 31, "Edição de dados de fornecedor");
                     return true;
                 }
             }

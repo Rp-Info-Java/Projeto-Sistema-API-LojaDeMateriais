@@ -4,6 +4,7 @@ import br.framework.annotations.TableAnnotation;
 import br.framework.classes.DataBase.EntityClass;
 import lombok.Getter;
 import lombok.Setter;
+import main.core.java.br.com.rpinfo.lorenzo.application.dto.LogOperacoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Data;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Descricao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Numerico;
@@ -27,5 +28,15 @@ public class LogOperacoes extends EntityClass implements Serializable {
 
     public LogOperacoes(Boolean autoEnableFields){
         super();
+    }
+
+    public LogOperacoesDto toDto(){
+        LogOperacoesDto logDto = new LogOperacoesDto();
+        logDto.setCodigo(this.getCodigo().getValue());
+        logDto.setData(this.getData().getValue());
+        logDto.setHora(this.getHora().getValue());
+        logDto.setCodigoUsuario(this.getUsua_codigo().getValue());
+        logDto.setDescricao(this.getDescricao().getValue());
+        return logDto;
     }
 }
