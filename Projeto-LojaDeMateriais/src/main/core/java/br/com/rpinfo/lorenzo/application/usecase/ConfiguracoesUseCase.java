@@ -7,6 +7,7 @@ import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.service.ConfiguracoesService;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.enums.MethodVersion;
 import main.core.java.br.com.rpinfo.lorenzo.infrastructure.datasource.db.ConnectionManager;
+import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.sql.SQLException;
 
@@ -37,6 +38,7 @@ public class ConfiguracoesUseCase extends ConfiguracoesService {
         try {
             connection = ConnectionManager.newConnection();
             business = new ConfiguracoesService(connection);
+            DocumentoUtils.gravaLog(connection, 12, "Consulta de configurações");
             return ResponseHandler.ok(business.getConfiguracoes(), methodVersion);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao buscar lista de configurações: " + e.getMessage());
@@ -53,6 +55,7 @@ public class ConfiguracoesUseCase extends ConfiguracoesService {
         try {
             connection = ConnectionManager.newConnection();
             business = new ConfiguracoesService(connection);
+            DocumentoUtils.gravaLog(connection, 12, "Consulta de configurações");
             return ResponseHandler.ok(business.getConfiguracaoById(id), methodVersion);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao buscar configuração por ID: " + e.getMessage());

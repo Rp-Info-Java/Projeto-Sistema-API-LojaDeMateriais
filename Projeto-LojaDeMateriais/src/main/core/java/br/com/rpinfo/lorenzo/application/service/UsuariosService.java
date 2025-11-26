@@ -26,12 +26,12 @@ public class UsuariosService extends ServiceBase {
     }
 
     public UsuariosDto getUsuarioById(Integer id) throws Exception {
-        DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuário por ID - DTO");
+        DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuário por ID");
         return this.dao.getUsuario(id).toDto();
     }
 
+    //getUsuario para usar no ConnectionManager e salvar o Usuário do sistema
     public Usuarios getUsuarioEntityById(Integer id) throws Exception {
-        DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuários por ID");
         return this.dao.getUsuario(id);
     }
 

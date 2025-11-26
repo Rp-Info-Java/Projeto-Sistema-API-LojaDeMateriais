@@ -10,7 +10,7 @@ import java.util.List;
 public interface RelatoriosDao {
     List<MovProdutosC> getEntradas () throws Exception;
 
-    List<MovProdutosC> getSaidas() throws Exception;
+    List<MovProdutosC> getSaidas() throws Exception; //_es
 
     List<MovProdutosC> getCanceladas() throws Exception; //virá do getStatus
 

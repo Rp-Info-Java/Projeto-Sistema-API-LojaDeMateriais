@@ -29,7 +29,7 @@ public class MovProdutosD extends EntityClass implements Serializable {
 
     public MovProdutosD(Boolean autoEnableFields){ super(); }
 
-    /*public MovProdutosDetDto toDto(){
+    public MovProdutosDetDto toDto(){
         MovProdutosDetDto dto = new MovProdutosDetDto();
         dto.setTransacao(this.getTransacao().getValue());
         dto.setStatus(this.getStatus().getValue());
@@ -40,5 +40,5 @@ public class MovProdutosD extends EntityClass implements Serializable {
         dto.setValorOutros(this.getValoroutros().getValue());
         dto.setValorTotal(this.getValortotal().getValue());
         return dto;
-    }*/
+    }
 }

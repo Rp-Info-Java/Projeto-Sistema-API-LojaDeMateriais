@@ -7,7 +7,6 @@ import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.service.ConfiguracoesService;
 import main.core.java.br.com.rpinfo.lorenzo.application.service.MovProdutoService;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Configuracoes;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.enums.MethodVersion;
 import main.core.java.br.com.rpinfo.lorenzo.infrastructure.datasource.db.ConnectionManager;
 
@@ -74,6 +73,22 @@ public class MovProdutoUseCase extends MovProdutoService {
             return ResponseHandler.ok(business.cancelarMovimentacao(transacao), methodVersion);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao cancelar movimentação: " + e.getMessage());
+        } finally{
+            if(connection != null){
+                connection.close();
+            }
+        }
+    }
+
+    public static Response getMovimentacaoByTransac(String transaction, MethodVersion methodVersion) throws Exception {
+        IConnection connection = null;
+        MovProdutoService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new MovProdutoService(connection);
+            return ResponseHandler.ok(business.getMovimentacaoByTransaction(transaction), methodVersion);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao consultar movimentação: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();

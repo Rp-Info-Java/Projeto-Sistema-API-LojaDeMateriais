@@ -177,6 +177,24 @@ public class MovProdutoService extends ServiceBase {
         return null;
     }
 
+    public MovProdutosCabDto getMovimentacaoByTransaction(String transaction) throws Exception {
+        try {
+            MovProdutosC mvpc = this.dao.getMovimentacaoC(transaction);
+            List<MovProdutosD> listD = this.dao.getMovimentacaoD(transaction);
+
+            if (mvpc != null) {
+                if(!listD.isEmpty()){
+                    mvpc.setItens(listD);
+                }
+                DocumentoUtils.gravaLog(this.getConnection(), 52, "Consulta de movimentação por transação");
+                return mvpc.toDto();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new Exception("Erro ao cancelar movimentação: " + e.getMessage());
+        }
+    }
+
     public boolean atualizarEstoque(List<MovProdutosD> listaProdutos, String entSaida) throws Exception {
         ProdutosService prodServ = new ProdutosService(getConnection());
 

@@ -18,31 +18,19 @@ public final class DocumentoUtils {
     }
 
     public static boolean validarTipo(String tipo) {
-        if (("F").equals(tipo) || ("J").equals(tipo)) {
-            return true;
-        }
-        return false;
+        return ("F").equals(tipo) || ("J").equals(tipo);
     }
 
     public static boolean validarSituacao(String situacao) {
-        if (("N").equals(situacao) || ("I").equals(situacao)) {
-            return true;
-        }
-        return false;
+        return ("N").equals(situacao) || ("I").equals(situacao);
     }
 
     public static boolean validarTamanhoCpfCnpj(String cpfCnpj) {
-        if (cpfCnpj.length() == 11 || cpfCnpj.length() == 14) {
-            return true;
-        }
-        return false;
+        return cpfCnpj.length() == 11 || cpfCnpj.length() == 14;
     }
 
     public static boolean validarCamposConfig(String campo) {
-        if (("S").equals(campo) || ("N").equals(campo)) {
-            return true;
-        }
-        return false;
+        return ("S").equals(campo) || ("N").equals(campo);
     }
 
     public static String formatarHorario(LocalTime hora) {
@@ -61,7 +49,7 @@ public final class DocumentoUtils {
 
         LocalDate data = LocalDate.parse(dataComoString, formatter);
 
-        //Pra funcionar a converesão, precisa de um ZoneId (Fuso Horário).
+        //Pra funcionar a conversão, precisa de um ZoneId (Fuso Horário).
         return Date.from(data.atStartOfDay(ZoneId.of("America/Sao_Paulo")).toInstant());
     }
 
@@ -120,7 +108,11 @@ public final class DocumentoUtils {
         logMap.put(61, "Edição de dados de usuário"); //Log Usuários entre 60 e 69
         logMap.put(62, "Consulta de usuário(s)"); //Log Usuários entre 60 e 69
 
-        logMap.put(70, "Consulta de logs de operações"); // Log de operações
+        logMap.put(70, "Consulta de logs de operações"); // Logs do relatório 70 a 79
+        logMap.put(71, "Consulta de entradas nas movimentações");
+        logMap.put(72, "Consulta de saídas nas movimentações");
+        logMap.put(73, "Consulta de movimentações canceladas");
+        logMap.put(74, "Consulta de comissões dos vendedores");
 
         logMap.put(80, "Gravação de Município"); //Log Municípios entre 80 e 89
         logMap.put(81, "Edição de dados de Município(s)");

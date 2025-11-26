@@ -41,7 +41,6 @@ public class ConfiguracoesService extends ServiceBase {
         List<Configuracoes> listConfiguracoes = this.dao.getListConfiguracoes();
 
         if (!listConfiguracoes.isEmpty()) {
-            DocumentoUtils.gravaLog(this.getConnection(), 12, "Consulta de configurações");
             return listConfiguracoes.stream().map(ConfiguracoesDto::new).toList();
         }
         return null;
@@ -51,7 +50,6 @@ public class ConfiguracoesService extends ServiceBase {
         Configuracoes config = this.dao.getConfiguracao(id);
         try {
             if (config != null) {
-                DocumentoUtils.gravaLog(this.getConnection(), 12, "Consulta de configurações");
                 return config.toDto();
             }
             return null;

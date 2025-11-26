@@ -27,4 +27,9 @@ public class MovProdutosController {
     public Response cancelarMovimentacao(@PathVariable String version, @PathVariable String transaction) throws Exception {
         return MovProdutoUseCase.cancelarMovimentacao(transaction, MethodVersion.fromValue(version));
     }
+
+    @GetMapping("/{version}/{transaction}/movimentacoes/getMovimentacaoByTransaction")
+    public Response getMovimentacao(@PathVariable String version, @PathVariable String transaction) throws Exception {
+        return MovProdutoUseCase.getMovimentacaoByTransac(transaction, MethodVersion.fromValue(version));
+    }
 }
