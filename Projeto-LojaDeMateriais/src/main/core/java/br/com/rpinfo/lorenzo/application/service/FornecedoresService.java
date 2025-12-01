@@ -51,13 +51,23 @@ public class FornecedoresService extends ServiceBase{
     }
 
     public List<FornecedoresDto> getListFornecedores() throws Exception {
-        DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedores");
-        return this.dao.getListFornecedores().stream().map(FornecedoresDto::new).toList();
+        List<Fornecedores> fornecedores = this.dao.getListFornecedores();
+
+        if(!fornecedores.isEmpty()){
+            DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedores");
+            return fornecedores.stream().map(FornecedoresDto::new).toList();
+        }
+        return null;
     }
 
     public FornecedoresDto getFornecedorById(Integer id) throws Exception{
-        DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedor");
-        return this.dao.getFornecedor(id).toDto();
+        Fornecedores fornecedor = this.dao.getFornecedor(id);
+
+        if(fornecedor != null){
+            DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedor");
+            return fornecedor.toDto();
+        }
+        return null;
     }
 
     public boolean atualizarFornecedor(FornecedoresDto fornDto) throws Exception{

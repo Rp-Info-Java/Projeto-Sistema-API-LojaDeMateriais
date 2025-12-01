@@ -21,13 +21,23 @@ public class UsuariosService extends ServiceBase {
     }
 
     public List<UsuariosDto> getListUsuarios() throws Exception {
-        DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuários");
-        return this.dao.getListUsuarios().stream().map(UsuariosDto::new).toList();
+        List<Usuarios> usuarios = this.dao.getListUsuarios();
+
+        if(!usuarios.isEmpty()){
+            DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuários");
+            return usuarios.stream().map(UsuariosDto::new).toList();
+        }
+        return null;
     }
 
     public UsuariosDto getUsuarioById(Integer id) throws Exception {
-        DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuário por ID");
-        return this.dao.getUsuario(id).toDto();
+        Usuarios usuario = this.dao.getUsuario(id);
+
+        if(usuario != null){
+            DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuário por ID");
+            return usuario.toDto();
+        }
+        return null;
     }
 
     //getUsuario para usar no ConnectionManager e salvar o Usuário do sistema

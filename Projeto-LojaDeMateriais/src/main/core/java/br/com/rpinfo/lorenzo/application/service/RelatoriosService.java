@@ -29,36 +29,42 @@ public class RelatoriosService extends ServiceBase{
         List<MovProdutosC> listMvpc = this.dao.getEntradas();
         List<MovProdutosD> listMvpd = this.daoMovD.getListMovimentacoesD();
 
-        listMvpc.forEach(mvpc -> {
-            mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
-        });
-
-        DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entradas nas movimentações");
-        return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+        if(!listMvpc.isEmpty()){
+            listMvpc.forEach(mvpc -> {
+                mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+            });
+            DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entradas nas movimentações");
+            return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+        }
+        return null;
     }
 
     public List<MovProdutosCabDto> getSaidas() throws Exception {
         List<MovProdutosC> listMvpc = this.dao.getSaidas();
         List<MovProdutosD> listMvpd = this.daoMovD.getListMovimentacoesD();
 
-        listMvpc.forEach(mvpc -> {
-            mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
-        });
-
-        DocumentoUtils.gravaLog(this.getConnection(), 72, "Consulta de saídas nas movimentações");
-        return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+        if(!listMvpc.isEmpty()) {
+            listMvpc.forEach(mvpc -> {
+                mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+            });
+            DocumentoUtils.gravaLog(this.getConnection(), 72, "Consulta de saídas nas movimentações");
+            return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+        }
+        return null;
     }
 
     public List<MovProdutosCabDto> getCanceladas() throws Exception {
         List<MovProdutosC> listMvpc = this.dao.getCanceladas();
         List<MovProdutosD> listMvpd = this.daoMovD.getListMovimentacoesD();
 
-        listMvpc.forEach(mvpc -> {
-            mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
-        });
-
-        DocumentoUtils.gravaLog(this.getConnection(), 73, "Consulta de movimentações canceladas");
-        return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+        if(!listMvpc.isEmpty()) {
+            listMvpc.forEach(mvpc -> {
+                mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+            });
+            DocumentoUtils.gravaLog(this.getConnection(), 73, "Consulta de movimentações canceladas");
+            return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+        }
+        return null;
     }
 
     public List<VendedoresDto> getComissoes() throws Exception {
