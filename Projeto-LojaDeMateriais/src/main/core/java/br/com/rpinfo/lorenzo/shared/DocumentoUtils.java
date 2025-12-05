@@ -2,7 +2,9 @@ package main.core.java.br.com.rpinfo.lorenzo.shared;
 
 import br.framework.classes.DataBase.Transaction;
 import br.framework.interfaces.IConnection;
+import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.LogOperacoes;
+import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 import main.core.java.br.com.rpinfo.lorenzo.infrastructure.datasource.db.ConnectionManager;
 
 import java.time.LocalDate;
@@ -37,6 +39,36 @@ public final class DocumentoUtils {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
         return hora.format(formatter);
+    }
+
+    public static boolean validarStatusMovimento(ConfiguracoesDto configDto, String status) {
+        if(configDto != null){
+            if(("N").equals(status)){
+                return true;
+            }else if(("C").equals(status)){
+                if(("N").equals(configDto.getValidaSaidas())){
+                    return true;
+                }else if(("S").equals(configDto.getValidaSaidas())){
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean validarImpedimento(ConfiguracoesDto configDto, String situacao){
+        if(configDto != null){
+            if(("N").equals(configDto.getValidaFornecedor())){
+                return true;
+            }else if(("S").equals(configDto.getValidaFornecedor())){
+                if(("N").equals(situacao)){
+                    return true;
+                }else if(("I").equals(situacao)){
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 
     public static Date parseData(String dataComoString) {
@@ -82,7 +114,7 @@ public final class DocumentoUtils {
         }
     }
 
-    private static boolean logs(Integer codigoLog) {
+    public static boolean logs(Integer codigoLog) {   //verificaLog e retorna boolean
         Map<Integer, String> logMap = new HashMap<>();
         logMap.put(10, "Gravação de configuração");  //Todas os logs relacionados a configuração serão entre 10 e 19
         logMap.put(11, "Edição nas configurações");  //Todas os logs relacionados a configuração serão entre 10 e 19
@@ -125,7 +157,9 @@ public final class DocumentoUtils {
         return logMap.containsKey(codigoLog);
     }
 
-    private static String getLogDescription(Integer codigoLog) {
+    //Criar função para salvar o mapping das mensagens (aqui retorna o mapping)
+
+    private static String getLogDescription(Integer codigoLog) { //aqui retorna a descrição)
         Map<Integer, String> logMap2 = new HashMap<>();
         logMap2.put(1, "Gravação de configuração");
         logMap2.put(2, "Gravação de cliente");

@@ -31,7 +31,7 @@ public class LogOperacoesDaoImp extends Repository implements LogOperacoesDao {
         }
         if(dataInicio != null){
             Date dataIni = DocumentoUtils.parseData(dataInicio);
-            sql.and("log_data", "<=", dataIni);
+            sql.and("log_data", ">=", dataIni);
         }
         if(dataFim != null){
             Date dataF = DocumentoUtils.parseData(dataFim);

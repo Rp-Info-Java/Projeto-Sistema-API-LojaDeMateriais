@@ -15,4 +15,6 @@ public interface RelatoriosDao {
     List<MovProdutosC> getCanceladas() throws Exception; //virá do getStatus
 
     List<Vendedores> getComissoes() throws Exception; //virá do getComissoes do vendedores
+
+    MovProdutosC getMovimentacaoEntraE(String transaction) throws Exception;
 }

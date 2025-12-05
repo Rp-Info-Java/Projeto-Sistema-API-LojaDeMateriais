@@ -26,6 +26,21 @@ public class RelatoriosDaoImp extends Repository implements RelatoriosDao{
     }
 
     @Override
+    public MovProdutosC getMovimentacaoEntraE(String transaction) throws Exception {
+        QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                .select("*")
+                .from(MovProdutosC.class)
+                .where("mvpc_transacao", "=", transaction)
+                .and("mvpc_es", "=", "E");
+
+        List<MovProdutosC> list = this.getManager().queryFactory(sql, MovProdutosC.class);
+        if(!list.isEmpty()){
+            return list.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public List<MovProdutosC> getSaidas() throws Exception {
         QueryBuilder sql = QueryBuilder.create(this.getConnection())
                 .select("*")
@@ -49,7 +64,7 @@ public class RelatoriosDaoImp extends Repository implements RelatoriosDao{
     @Override
     public List<Vendedores> getComissoes() throws Exception {
         QueryBuilder sql = QueryBuilder.create(this.getConnection())
-                .select("vend_comissao")
+                .select("*")
                 .from(Vendedores.class);
 
         return this.getManager().queryFactory(sql.build(), Vendedores.class);

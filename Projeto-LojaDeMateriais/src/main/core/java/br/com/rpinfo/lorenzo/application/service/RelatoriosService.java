@@ -76,4 +76,16 @@ public class RelatoriosService extends ServiceBase{
         }
         return null;
     }
+
+    public MovProdutosCabDto getEntradaTransacao(String transaction) throws Exception {
+        MovProdutosC mvpc = this.dao.getMovimentacaoEntraE(transaction);
+        List<MovProdutosD> mvpdList = this.daoMovD.getListMovimentacoesD();
+
+        if(mvpc != null){
+            mvpc.setItens(mvpdList.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+            DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entrada na movimentação");
+            return mvpc.toDto();
+        }
+        return null;
+    }
 }

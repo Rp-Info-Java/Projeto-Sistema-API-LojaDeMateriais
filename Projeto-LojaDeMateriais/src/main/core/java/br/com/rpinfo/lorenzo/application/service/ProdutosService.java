@@ -35,8 +35,8 @@ public class ProdutosService extends ServiceBase {
 
             if(verificaEmbalagem(produtosDto.getEmbalagem())){
                 Produtos produto = produtosDto.toEntity();
-                produto.getDtultcompra().setValue(data.getValue());           //Como são duas coisas diferentes, ver quais datas colocar
-                produto.getDtultvenda().setValue(data.getValue());           //Colocando apenas a data atual para ambos
+                produto.getDtultcompra().setValue(data.getValue());
+                produto.getDtultvenda().setValue(data.getValue());
 
                 if (this.dao.insertProduto(produto)) {
                     DocumentoUtils.gravaLog(this.getConnection(), 40, "Gravação de produto");

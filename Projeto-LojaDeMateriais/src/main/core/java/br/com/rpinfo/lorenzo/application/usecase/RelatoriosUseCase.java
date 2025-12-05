@@ -76,4 +76,20 @@ public class RelatoriosUseCase extends RelatoriosService {
             }
         }
     }
+
+    public static Response getEntradaByTransaction(String transaction, MethodVersion methodVersion) throws Exception {
+        IConnection connection = null;
+        RelatoriosService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new RelatoriosService(connection);
+            return ResponseHandler.ok(business.getEntradaTransacao(transaction), methodVersion);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao buscar entrada na movimentação: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
 }

@@ -4,10 +4,16 @@ import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Fornecedores;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosD;
+import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Vendedores;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDao;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDao;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.util.List;
@@ -15,31 +21,52 @@ import java.util.List;
 public class MovProdutoService extends ServiceBase {
 
     private MovimentacoesDao dao;
+    private FornecedoresDao daoForn;
+    private VendedoresDao daoVen;
 
     public MovProdutoService(IConnection connection) {
         super(connection);
         this.dao = new MovimentacoesDaoImp(connection);
+        this.daoForn = new FornecedoresDaoImp(connection);
+        this.daoVen = new VendedoresDaoImp(connection);
     }
 
     public boolean adicionarEntradas(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
+        Fornecedores forn = this.daoForn.getFornecedor(mvpcDto.getCodigoEntidade());
+        Vendedores vend = this.daoVen.getVendedor(mvpcDto.getCodigoVendedor());
         try {
             if (mvpcDto == null) {
                 throw new Exception("Os dados da movimentação são nulos.");
             }
-            MovProdutosC mvpc = mvpcDto.toEntity();
-            List<MovProdutosD> listD = mvpc.getItens();
 
-            if (this.validarTipoEntidade(mvpc)) {
+            MovProdutosC mvpc = mvpcDto.toEntity();
+
+            if(forn != null){
+                if(DocumentoUtils.validarImpedimento(config, forn.getSituacao().getValue())){
+                    mvpc.getCodentidade().setValue(forn.getCodigo().getValue());
+                    mvpc.getTipoentidade().setValue(forn.getTipo().getValue());
+                }else{
+                    return false; //Garante que, caso o fornecedor esteja impedido, a movimentação não seja inserida.
+                }
+                if(vend != null){
+                    mvpc.getVend_codigo().setValue(vend.getCodigo().getValue());
+                }else{
+                    return false; //Garante que, caso o vendedor seja nulo, a movimentação não seja inserida.
+                }
+
+                List<MovProdutosD> listD = mvpc.getItens();
+
                 for (int i = 0; i < listD.size(); i++) {
                     listD.get(i).getStatus().setValue("N");
                 }
+
                 mvpc.setItens(listD);
                 mvpc.getStatus().setValue("N");             //N ou C, sempre seta "N"
                 mvpc.getEs().setValue("E");                 //E ou S, sempre seta "E" em adicionarEntradas
 
                 mvpc = this.validarConfiguracao(mvpc, config);
 
-                if(this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue())){
+                if (this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue())) {
                     DocumentoUtils.gravaLog(this.getConnection(), 50, "Gravação de movimentação");
                     return this.dao.insertEntradas(mvpc);
                 }
@@ -52,11 +79,19 @@ public class MovProdutoService extends ServiceBase {
     }
 
     public boolean adicionarSaidas(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
-        MovProdutosC mvpc = mvpcDto.toEntity();
-        int i = 0;
+        MovProdutosC mvpc = this.dao.getMovimentacaoC(mvpcDto.getTransacao());
+        Fornecedores forn = this.daoForn.getFornecedor(mvpcDto.getCodigoEntidade());
+        Vendedores vend = this.daoVen.getVendedor(mvpcDto.getCodigoVendedor());
+
+        if (forn == null) {
+            throw new Exception("Os dados do fornecedor são nulos.");
+        }
+        if(vend == null){
+            throw new Exception("Os dados do vendedor são nulos.");
+        }
 
         try {
-            if (validarSaida(config)) {
+            if (DocumentoUtils.validarStatusMovimento(config, mvpc.getStatus().getValue()) && DocumentoUtils.validarImpedimento(config, forn.getSituacao().getValue())) {
                 if (mvpc != null) {
                     if (!Strings.isNullOrEmpty(mvpcDto.getNumeroDocumento())) {
                         mvpc.getNumdcto().setValue(mvpcDto.getNumeroDocumento());
@@ -65,24 +100,18 @@ public class MovProdutoService extends ServiceBase {
                         mvpc.getDatamvto().setValue(mvpcDto.getDataMovimento());
                     }
                     if (!Strings.isNullOrEmpty(mvpcDto.getStatus())) {
-                        if (this.validarStatus(mvpc.getStatus().getValue())) {
+                        if (this.validarStatus(mvpcDto.getStatus())) {
                             mvpc.getStatus().setValue(mvpcDto.getStatus());
-                        } else {
-                            return false;
                         }
                     }
-                    if (!Strings.isNullOrEmpty(mvpcDto.getTipoEntidade())) {
-                        if (this.validarTipoEntidade(mvpc)) {
-                            mvpc.getTipoentidade().setValue(mvpcDto.getTipoEntidade());
-                        } else {
-                            return false;
-                        }
+                    if (!Strings.isNullOrEmpty(forn.getTipo().getValue())) {
+                        mvpc.getTipoentidade().setValue(forn.getTipo().getValue());
                     }
-                    if (mvpcDto.getCodigoEntidade() != null) {
-                        mvpc.getCodentidade().setValue(mvpcDto.getCodigoEntidade());
+                    if (forn.getCodigo().getValue() != null) {
+                        mvpc.getCodentidade().setValue(forn.getCodigo().getValue());
                     }
-                    if (mvpcDto.getCodigoVendedor() != null) {
-                        mvpc.getVend_codigo().setValue(mvpcDto.getCodigoVendedor());
+                    if (vend.getCodigo().getValue() != null) {
+                        mvpc.getVend_codigo().setValue(vend.getCodigo().getValue());
                     }
                     if (mvpcDto.getTotalProdutos() != null) {
                         mvpc.getTotalprod().setValue(mvpcDto.getTotalProdutos());
@@ -96,7 +125,10 @@ public class MovProdutoService extends ServiceBase {
                     if (mvpcDto.getTotalDocumento() != null) {
                         mvpc.getTotaldcto().setValue(mvpcDto.getTotalDocumento());
                     }
-
+//                    if (mvpcDto.getItens() != null) {
+//                        mvpcDto.getItens().stream().filter(p -> p.getCodigoProduto().equals(item.getProd_codigo().getValue())).findFirst().orElse(null);
+//                    }
+//
 //                for (MovProdutosD item : listaMovD) {
 //                    MovProdutosDetDto produto2 = mvpcDto.getItens().stream().filter(p -> p.getCodigoProduto().equals(item.getProd_codigo().getValue())).findFirst().orElse(null);
 //
@@ -116,7 +148,7 @@ public class MovProdutoService extends ServiceBase {
 //                        listaMovD.set(i, item);
 //                    }
 //                    i++;
-//                }
+
                     mvpc.getEs().setValue("S");                 //sempre seta "S" em adicionarSaidas
 
                     mvpc = this.validarConfiguracao(mvpc, config);
@@ -183,7 +215,7 @@ public class MovProdutoService extends ServiceBase {
             List<MovProdutosD> listD = this.dao.getMovimentacaoD(transaction);
 
             if (mvpc != null) {
-                if(!listD.isEmpty()){
+                if (!listD.isEmpty()) {
                     mvpc.setItens(listD);
                 }
                 DocumentoUtils.gravaLog(this.getConnection(), 52, "Consulta de movimentação por transação");
@@ -224,13 +256,6 @@ public class MovProdutoService extends ServiceBase {
         return false;
     }
 
-    public boolean validarTipoEntidade(MovProdutosC mvpc) {
-        if (mvpc.getTipoentidade().getValue() != null) {
-            return mvpc.getTipoentidade().getValue().equals("F") || mvpc.getTipoentidade().getValue().equals("J");
-        }
-        return false;
-    }
-
     public MovProdutosC validarConfiguracao(MovProdutosC mvpc, ConfiguracoesDto config) throws Exception {
         if (mvpc != null && config != null) {
             if (config.getPercentualDescontos() > 0) {
@@ -243,12 +268,5 @@ public class MovProdutoService extends ServiceBase {
             }
         }
         return mvpc;
-    }
-
-    public boolean validarSaida(ConfiguracoesDto config) {
-        if (config != null) {
-            return ("S").equals(config.getValidaSaidas());
-        }
-        return false;
     }
 }

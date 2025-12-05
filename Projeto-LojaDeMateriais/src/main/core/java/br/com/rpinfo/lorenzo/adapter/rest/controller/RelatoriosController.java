@@ -28,4 +28,9 @@ public class RelatoriosController {
     public Response getComissoes(@PathVariable String version) throws Exception {
         return RelatoriosUseCase.getComissoes(MethodVersion.fromValue(version));
     }
+
+    @GetMapping("/{version}/{transaction}/relatorios/entradasByTransaction")
+    public Response getEntradasByTransaction(@PathVariable String version, @PathVariable String transaction) throws Exception {
+        return RelatoriosUseCase.getEntradaByTransaction(transaction, MethodVersion.fromValue(version));
+    }
 }
