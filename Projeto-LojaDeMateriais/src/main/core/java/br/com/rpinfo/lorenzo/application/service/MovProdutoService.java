@@ -4,6 +4,7 @@ import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
+import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosDetDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Fornecedores;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosD;
@@ -41,16 +42,16 @@ public class MovProdutoService extends ServiceBase {
 
             MovProdutosC mvpc = mvpcDto.toEntity();
 
-            if(forn != null){
-                if(DocumentoUtils.validarImpedimento(config, forn.getSituacao().getValue())){
+            if (forn != null) {
+                if (DocumentoUtils.validarImpedimento(config, forn.getSituacao().getValue())) {
                     mvpc.getCodentidade().setValue(forn.getCodigo().getValue());
                     mvpc.getTipoentidade().setValue(forn.getTipo().getValue());
-                }else{
+                } else {
                     return false; //Garante que, caso o fornecedor esteja impedido, a movimentação não seja inserida.
                 }
-                if(vend != null){
+                if (vend != null) {
                     mvpc.getVend_codigo().setValue(vend.getCodigo().getValue());
-                }else{
+                } else {
                     return false; //Garante que, caso o vendedor seja nulo, a movimentação não seja inserida.
                 }
 
@@ -86,7 +87,7 @@ public class MovProdutoService extends ServiceBase {
         if (forn == null) {
             throw new Exception("Os dados do fornecedor são nulos.");
         }
-        if(vend == null){
+        if (vend == null) {
             throw new Exception("Os dados do vendedor são nulos.");
         }
 
@@ -125,30 +126,41 @@ public class MovProdutoService extends ServiceBase {
                     if (mvpcDto.getTotalDocumento() != null) {
                         mvpc.getTotaldcto().setValue(mvpcDto.getTotalDocumento());
                     }
-//                    if (mvpcDto.getItens() != null) {
-//                        mvpcDto.getItens().stream().filter(p -> p.getCodigoProduto().equals(item.getProd_codigo().getValue())).findFirst().orElse(null);
-//                    }
-//
-//                for (MovProdutosD item : listaMovD) {
-//                    MovProdutosDetDto produto2 = mvpcDto.getItens().stream().filter(p -> p.getCodigoProduto().equals(item.getProd_codigo().getValue())).findFirst().orElse(null);
-//
-//                    if(produto2 != null){
-//                        item.getQtde().setValue(produto2.getQuantidade());
-//                        item.getValordesc().setValue(produto2.getValorDesc());
-//                        item.getValoracres().setValue(produto2.getValorAcrescimo());
-//                        item.getValoroutros().setValue(produto2.getValorOutros());
-//                        item.getValortotal().setValue(produto2.getValorTotal());
-//                    }
-//                    if (!this.validarStatus(item.getStatus().getValue())) {
-//                        return false;
-//                    }
-//                    if (item.getProd_codigo() != null && item.getQtde() != null && item.getValordesc() != null
-//                            && item.getValoracres() != null && item.getValoroutros() != null && item.getValortotal() != null) {
-//                        item.toUpdate("mvpd_transacao = '" + mvpc.getTransacao() + "'");
-//                        listaMovD.set(i, item);
-//                    }
-//                    i++;
+                    if (mvpcDto.getItens() != null) {
+                        List<MovProdutosD> itensMov = this.dao.getMovimentacaoD(mvpc.getTransacao().getValue());
+                        mvpc.setItens(itensMov);
+                        List<MovProdutosD> itens = mvpc.getItens();
 
+                        for (int i = 0; i < itens.size(); i++) {
+                            MovProdutosD item = itens.get(i);
+
+                            MovProdutosDetDto dto = mvpcDto.getItens().stream()
+                                    .filter(p -> p.getCodigoProduto().equals(item.getProd_codigo().getValue()))
+                                    .findFirst()
+                                    .orElse(null);
+
+                            if (dto != null) {
+                                if (dto.getQuantidade() != null) {
+                                    item.getQtde().setValue(dto.getQuantidade());
+                                }
+                                if (dto.getValorAcrescimo() != null) {
+                                    item.getValoracres().setValue(dto.getValorAcrescimo());
+                                }
+                                if (dto.getValorOutros() != null) {
+                                    item.getValoroutros().setValue(dto.getValorOutros());
+                                }
+                                if (dto.getValorTotal() != null) {
+                                    item.getValortotal().setValue(dto.getValorTotal());
+                                }
+                            }
+
+                            item.getStatus().setValue("N");
+                            item.toUpdate("mvpd_transacao = '" + mvpc.getTransacao().getValue() + "'");
+                            itens.set(i, item);
+                        }
+
+                        mvpc.setItens(itens);
+                    }
                     mvpc.getEs().setValue("S");                 //sempre seta "S" em adicionarSaidas
 
                     mvpc = this.validarConfiguracao(mvpc, config);
