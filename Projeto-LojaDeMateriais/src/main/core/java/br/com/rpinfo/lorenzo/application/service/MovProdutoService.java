@@ -5,18 +5,18 @@ import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosDetDto;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Fornecedores;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosD;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Vendedores;
+import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.*;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDao;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovProdutoService extends ServiceBase {
@@ -24,12 +24,14 @@ public class MovProdutoService extends ServiceBase {
     private MovimentacoesDao dao;
     private FornecedoresDao daoForn;
     private VendedoresDao daoVen;
+    private ProdutoDao daoProd;
 
     public MovProdutoService(IConnection connection) {
         super(connection);
         this.dao = new MovimentacoesDaoImp(connection);
         this.daoForn = new FornecedoresDaoImp(connection);
         this.daoVen = new VendedoresDaoImp(connection);
+        this.daoProd = new ProdutoDaoImp(connection);
     }
 
     public boolean adicionarEntradas(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
@@ -129,17 +131,20 @@ public class MovProdutoService extends ServiceBase {
                     if (mvpcDto.getItens() != null) {
                         List<MovProdutosD> itensMov = this.dao.getMovimentacaoD(mvpc.getTransacao().getValue());
                         mvpc.setItens(itensMov);
-                        List<MovProdutosD> itens = mvpc.getItens();
+                        Produtos prod = new Produtos();
+                        List<MovProdutosD> itens = new ArrayList<>();
 
-                        for (int i = 0; i < itens.size(); i++) {
-                            MovProdutosD item = itens.get(i);
-
-                            MovProdutosDetDto dto = mvpcDto.getItens().stream()
-                                    .filter(p -> p.getCodigoProduto().equals(item.getProd_codigo().getValue()))
-                                    .findFirst()
-                                    .orElse(null);
+                        for (int i = 0; i < itensMov.size(); i++) {
+                            MovProdutosD item = itensMov.get(i);
+                            MovProdutosDetDto dto = mvpcDto.getItens().get(i);
+                            prod = this.daoProd.getProduto(dto.getCodigoProduto());
 
                             if (dto != null) {
+                                if(dto.getCodigoProduto() != null){
+                                    if(prod != null){
+                                        item.getProd_codigo().setValue(prod.getCodigo().getValue());
+                                    }
+                                }
                                 if (dto.getQuantidade() != null) {
                                     item.getQtde().setValue(dto.getQuantidade());
                                 }
@@ -156,9 +161,8 @@ public class MovProdutoService extends ServiceBase {
 
                             item.getStatus().setValue("N");
                             item.toUpdate("mvpd_transacao = '" + mvpc.getTransacao().getValue() + "'");
-                            itens.set(i, item);
+                            itens.add(item);
                         }
-
                         mvpc.setItens(itens);
                     }
                     mvpc.getEs().setValue("S");                 //sempre seta "S" em adicionarSaidas
