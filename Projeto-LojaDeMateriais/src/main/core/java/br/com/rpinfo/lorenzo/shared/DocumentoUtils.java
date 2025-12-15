@@ -4,7 +4,6 @@ import br.framework.classes.DataBase.Transaction;
 import br.framework.interfaces.IConnection;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.LogOperacoes;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 import main.core.java.br.com.rpinfo.lorenzo.infrastructure.datasource.db.ConnectionManager;
 
 import java.time.LocalDate;

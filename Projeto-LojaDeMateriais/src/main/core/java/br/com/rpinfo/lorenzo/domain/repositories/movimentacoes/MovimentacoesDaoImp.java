@@ -86,9 +86,9 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
     @Override
     public boolean insertSaidas(MovProdutosC mvpc, String transacao) throws Exception {
         mvpc.toUpdate("mvpc_transacao = '" + transacao + "'");
-        mvpc.getItens().forEach(item -> {item.getTransacao().setValue(transacao);
+        /*mvpc.getItens().forEach(item -> {item.getTransacao().setValue(transacao);
             item.toUpdate("mvpd_transacao ='" + transacao + "' AND mvpd_prod_codigo = '" + item.getProd_codigo().getValue() + "'");
-        });
+        });*/
         Transaction transaction = null;
         try {
             transaction = this.getConnection().getTransaction();

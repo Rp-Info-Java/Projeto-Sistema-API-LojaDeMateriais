@@ -5,6 +5,8 @@ import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.Response;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.ResponseHandler;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ClienteDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.service.ClienteService;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.enums.MethodVersion;
 import main.core.java.br.com.rpinfo.lorenzo.infrastructure.datasource.db.ConnectionManager;
 
@@ -16,7 +18,7 @@ public class ClienteUseCase extends ClienteService {
         super(connection);
     }
 
-    public static Response inserirCliente(ClienteDto cliente, MethodVersion methodVersion) throws SQLException {
+    public static Response inserirCliente(ClienteDto cliente, MethodVersion methodVersion) throws ValidationException {
         IConnection connection = null;
         ClienteService business;
         try {
@@ -24,7 +26,7 @@ public class ClienteUseCase extends ClienteService {
             business = new ClienteService(connection);
             return ResponseHandler.ok(business.adicionarCliente(cliente), methodVersion);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao inserir cliente: " + e.getMessage());
+            throw new ValidationException("Erro ao inserir cliente: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();
@@ -32,7 +34,7 @@ public class ClienteUseCase extends ClienteService {
         }
     }
 
-    public static Response getListaClientes(MethodVersion methodVersion) throws SQLException {
+    public static Response getListaClientes(MethodVersion methodVersion) throws NullPointerException {
         IConnection connection = null;
         ClienteService business;
         try {
@@ -40,7 +42,7 @@ public class ClienteUseCase extends ClienteService {
             business = new ClienteService(connection);
             return ResponseHandler.ok(business.getListClientes(), methodVersion);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar lista de clientes: " + e.getMessage());
+            throw new NullPointerException("Erro ao buscar lista de clientes: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();
@@ -48,7 +50,7 @@ public class ClienteUseCase extends ClienteService {
         }
     }
 
-    public static Response getCliente(Integer id, MethodVersion methodVersion) throws SQLException {
+    public static Response getCliente(Integer id, MethodVersion methodVersion) throws NullPointerException {
         IConnection connection = null;
         ClienteService business;
         try {
@@ -56,7 +58,7 @@ public class ClienteUseCase extends ClienteService {
             business = new ClienteService(connection);
             return ResponseHandler.ok(business.getClienteById(id), methodVersion);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar cliente: " + e.getMessage());
+            throw new NullPointerException("Erro ao buscar cliente: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();
@@ -64,7 +66,7 @@ public class ClienteUseCase extends ClienteService {
         }
     }
 
-    public static Response atualizaCliente(ClienteDto clienteDto, MethodVersion methodVersion) throws SQLException {
+    public static Response atualizaCliente(ClienteDto clienteDto, MethodVersion methodVersion) throws NullPointerException {
         IConnection connection = null;
         ClienteService business;
         try {
@@ -72,7 +74,7 @@ public class ClienteUseCase extends ClienteService {
             business = new ClienteService(connection);
             return ResponseHandler.ok(business.atualizarCliente(clienteDto), methodVersion);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao atualizar clientes: " + e.getMessage());
+            throw new NullPointerException("Erro ao atualizar clientes: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();

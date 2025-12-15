@@ -2,9 +2,11 @@ package main.core.java.br.com.rpinfo.lorenzo.domain.repositories.cliente;
 
 import br.framework.classes.DataBase.*;
 import br.framework.interfaces.IConnection;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Cliente;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ClienteDaoImp extends Repository implements ClienteDao {
@@ -14,7 +16,7 @@ public class ClienteDaoImp extends Repository implements ClienteDao {
         this.getManager().setProcessNullToDefaultValues(false);
     }
 
-    private Integer getNextCode() throws Exception {
+    private Integer getNextCode() throws SQLException {
         Integer codigo = 0;
         QueryBuilder sql = QueryBuilder.create(this.getConnection())
                 .select("max(clie_codigo) + 1 as clie_codigo")
@@ -33,7 +35,7 @@ public class ClienteDaoImp extends Repository implements ClienteDao {
     }
 
     @Override
-    public boolean insertCliente(Cliente cliente) throws Exception {
+    public boolean insertCliente(Cliente cliente) throws SQLException {
         cliente.getCodigo().setValue(this.getNextCode());
         cliente.toInsert();
         Transaction transaction = null;
@@ -57,7 +59,7 @@ public class ClienteDaoImp extends Repository implements ClienteDao {
     }
 
     @Override
-    public boolean updateCliente(Cliente cliente) throws Exception {
+    public boolean updateCliente(Cliente cliente){
         cliente.toUpdate("clie_codigo = " + cliente.getCodigo().getValue());
         Transaction transaction = null;
         try {
@@ -80,7 +82,7 @@ public class ClienteDaoImp extends Repository implements ClienteDao {
     }
 
     @Override
-    public Cliente getCliente(Integer id) throws Exception {
+    public Cliente getCliente(Integer id) throws Exception{
         QueryBuilder sql = QueryBuilder.create(this.getConnection())
                 .select("*")
                 .from(Cliente.class)

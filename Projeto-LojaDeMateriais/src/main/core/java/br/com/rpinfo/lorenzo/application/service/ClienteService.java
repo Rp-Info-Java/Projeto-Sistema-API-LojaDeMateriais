@@ -8,7 +8,9 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Cliente;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.cliente.ClienteDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.cliente.ClienteDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class ClienteService extends ServiceBase {
@@ -20,7 +22,7 @@ public class ClienteService extends ServiceBase {
         this.dao = new ClienteDaoImp(connection);
     }
 
-    public boolean adicionarCliente(ClienteDto clienteDto) throws ValidationException {
+    public boolean adicionarCliente(ClienteDto clienteDto) throws SQLException, ValidationException {
         try {
             if (clienteDto == null) {
                 throw new ValidationException("Os dados do cliente são nulos.");
@@ -38,8 +40,10 @@ public class ClienteService extends ServiceBase {
                 }
             }
             return false;
-        } catch (Exception e) {
+        } catch (ValidationException e) {
             throw new ValidationException("Erro ao adicionar cliente: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao verificar CPF/CNPJ do cliente: " + e.getMessage());
         }
     }
 
@@ -83,8 +87,8 @@ public class ClienteService extends ServiceBase {
                     return true;
                 }
             }
-        } catch (Exception e) {
-            throw new Exception("Erro ao atualizar o cliente: " + e.getMessage());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("Erro ao atualizar o cliente: " + e.getMessage());
         }
         return false;
     }

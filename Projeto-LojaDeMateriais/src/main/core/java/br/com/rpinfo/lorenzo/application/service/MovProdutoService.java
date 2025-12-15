@@ -18,6 +18,7 @@ import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MovProdutoService extends ServiceBase {
 
@@ -131,22 +132,20 @@ public class MovProdutoService extends ServiceBase {
                     if (mvpcDto.getItens() != null) {
                         List<MovProdutosD> itensMov = this.dao.getMovimentacaoD(mvpc.getTransacao().getValue());
                         mvpc.setItens(itensMov);
-                        Produtos prod = new Produtos();
                         List<MovProdutosD> itens = new ArrayList<>();
 
                         for (int i = 0; i < itensMov.size(); i++) {
                             MovProdutosD item = itensMov.get(i);
-                            MovProdutosDetDto dto = mvpcDto.getItens().get(i);
-                            prod = this.daoProd.getProduto(dto.getCodigoProduto());
+                            MovProdutosDetDto dto = mvpcDto.getItens().stream().filter(d -> Objects.equals(d.getCodigoProduto(), item.getProd_codigo().getValue())).findFirst().orElse(null);
 
                             if (dto != null) {
-                                if(dto.getCodigoProduto() != null){
-                                    if(prod != null){
-                                        item.getProd_codigo().setValue(prod.getCodigo().getValue());
-                                    }
-                                }
+                                Integer codigoProdutoOriginal = item.getProd_codigo().getValue();
+
                                 if (dto.getQuantidade() != null) {
                                     item.getQtde().setValue(dto.getQuantidade());
+                                }
+                                if (dto.getValorDesc() != null){
+                                    item.getValordesc().setValue(dto.getValorDesc());
                                 }
                                 if (dto.getValorAcrescimo() != null) {
                                     item.getValoracres().setValue(dto.getValorAcrescimo());
@@ -157,11 +156,12 @@ public class MovProdutoService extends ServiceBase {
                                 if (dto.getValorTotal() != null) {
                                     item.getValortotal().setValue(dto.getValorTotal());
                                 }
+                                item.getStatus().setValue("N");
+                                item.toUpdate("mvpd_transacao = '" + mvpc.getTransacao().getValue() +
+                                        "' AND mvpd_prod_codigo = " + codigoProdutoOriginal);
+                                itens.add(item);
                             }
 
-                            item.getStatus().setValue("N");
-                            item.toUpdate("mvpd_transacao = '" + mvpc.getTransacao().getValue() + "'");
-                            itens.add(item);
                         }
                         mvpc.setItens(itens);
                     }
