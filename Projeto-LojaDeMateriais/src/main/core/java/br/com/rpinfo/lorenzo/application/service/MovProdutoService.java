@@ -8,15 +8,19 @@ import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosDetDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.*;
+import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Data;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDao;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,12 +29,14 @@ public class MovProdutoService extends ServiceBase {
     private MovimentacoesDao dao;
     private FornecedoresDao daoForn;
     private VendedoresDao daoVen;
+    private ProdutoDao daoProd;
 
     public MovProdutoService(IConnection connection) {
         super(connection);
         this.dao = new MovimentacoesDaoImp(connection);
         this.daoForn = new FornecedoresDaoImp(connection);
         this.daoVen = new VendedoresDaoImp(connection);
+        this.daoProd = new ProdutoDaoImp(connection);
     }
 
     public boolean adicionarEntradas(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
@@ -57,9 +63,17 @@ public class MovProdutoService extends ServiceBase {
                 }
 
                 List<MovProdutosD> listD = mvpc.getItens();
+                Data data = new Data();
+                Date dateJava = new Date();
+                data.setValue(dateJava);
 
                 for (int i = 0; i < listD.size(); i++) {
                     listD.get(i).getStatus().setValue("N");
+                    Produtos prod = this.daoProd.getProduto(listD.get(i).getProd_codigo().getValue());
+                    prod.getDtultcompra().setValue(data.getValue());
+                    if(this.daoProd.update(prod)){
+                        DocumentoUtils.gravaLog(this.getConnection(), 41, "Editando a data de compra do produto");
+                    }
                 }
 
                 mvpc.setItens(listD);
@@ -100,7 +114,7 @@ public class MovProdutoService extends ServiceBase {
                     if (!Strings.isNullOrEmpty(mvpcDto.getNumeroDocumento())) {
                         mvpc.getNumdcto().setValue(mvpcDto.getNumeroDocumento());
                     }
-                    if (!Strings.isNullOrEmpty(mvpcDto.getDataMovimento())) {
+                    if (mvpcDto.getDataMovimento() != null) {
                         mvpc.getDatamvto().setValue(mvpcDto.getDataMovimento());
                     }
                     if (!Strings.isNullOrEmpty(mvpcDto.getStatus())) {
@@ -133,6 +147,9 @@ public class MovProdutoService extends ServiceBase {
                         List<MovProdutosD> itensMov = this.dao.getMovimentacaoD(mvpc.getTransacao().getValue());
                         mvpc.setItens(itensMov);
                         List<MovProdutosD> itens = new ArrayList<>();
+                        Data data = new Data();
+                        Date dateJava = new Date();
+                        data.setValue(dateJava);
 
                         for (int i = 0; i < itensMov.size(); i++) {
                             MovProdutosD item = itensMov.get(i);
@@ -160,6 +177,12 @@ public class MovProdutoService extends ServiceBase {
                                 item.toUpdate("mvpd_transacao = '" + mvpc.getTransacao().getValue() +
                                         "' AND mvpd_prod_codigo = " + codigoProdutoOriginal);
                                 itens.add(item);
+
+                                Produtos prod = this.daoProd.getProduto(item.getProd_codigo().getValue());
+                                prod.getDtultvenda().setValue(data.getValue());
+                                if(this.daoProd.update(prod)){
+                                    DocumentoUtils.gravaLog(this.getConnection(), 41, "Editando a data de venda do produto");
+                                }
                             }
 
                         }

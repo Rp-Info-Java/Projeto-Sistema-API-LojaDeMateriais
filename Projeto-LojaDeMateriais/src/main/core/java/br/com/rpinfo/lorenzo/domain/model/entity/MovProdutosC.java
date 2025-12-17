@@ -5,6 +5,7 @@ import br.framework.classes.DataBase.EntityClass;
 import lombok.Getter;
 import lombok.Setter;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Data;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Decimal;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Descricao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Numerico;
@@ -20,7 +21,7 @@ public class MovProdutosC extends EntityClass implements Serializable {
 
     private Descricao transacao = new Descricao(true);
     private Descricao numdcto = new Descricao(true);
-    private Descricao datamvto = new Descricao(true);
+    private Data datamvto = new Data(true);
     private Descricao status = new Descricao(true);
     private Descricao es = new Descricao(true);
     private Descricao tipoentidade = new Descricao(true);

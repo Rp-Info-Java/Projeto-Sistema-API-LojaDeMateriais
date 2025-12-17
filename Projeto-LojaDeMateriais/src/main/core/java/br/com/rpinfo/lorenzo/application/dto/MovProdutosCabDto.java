@@ -6,6 +6,7 @@ import lombok.Setter;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.BaseDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -15,7 +16,7 @@ public class MovProdutosCabDto extends BaseDto {
     @Length(max = 10)
     private String numeroDocumento;
     @Length(max = 8)
-    private String dataMovimento;
+    private Date dataMovimento;
     @Length(max = 1)
     private String status;
     @Length(max = 1)

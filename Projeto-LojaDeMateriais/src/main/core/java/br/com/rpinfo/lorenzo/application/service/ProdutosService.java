@@ -23,9 +23,6 @@ public class ProdutosService extends ServiceBase {
     }
 
     public boolean adicionarProduto(ProdutosDto produtosDto) throws ValidationException {
-        Data data = new Data();
-        Date dateJava = new Date();
-        data.setValue(dateJava);
         try {
             if (produtosDto == null) {
                 throw new ValidationException("Os dados do produto são nulos.");
@@ -36,8 +33,8 @@ public class ProdutosService extends ServiceBase {
 
             if (verificaEmbalagem(produtosDto.getEmbalagem())) {
                 Produtos produto = produtosDto.toEntity();
-                produto.getDtultcompra().setValue(data.getValue());
-                produto.getDtultvenda().setValue(data.getValue());
+                //produto.getDtultcompra().setValue(data.getValue());
+                //produto.getDtultvenda().setValue(data.getValue());
 
                 if (this.dao.insertProduto(produto)) {
                     DocumentoUtils.gravaLog(this.getConnection(), 40, "Gravação de produto");
