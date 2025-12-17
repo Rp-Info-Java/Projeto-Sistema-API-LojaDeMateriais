@@ -10,7 +10,6 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.cliente.ClienteD
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class ClienteService extends ServiceBase {
@@ -22,15 +21,15 @@ public class ClienteService extends ServiceBase {
         this.dao = new ClienteDaoImp(connection);
     }
 
-    public boolean adicionarCliente(ClienteDto clienteDto) throws SQLException, ValidationException {
+    public boolean adicionarCliente(ClienteDto clienteDto) throws ValidationException {
         try {
             if (clienteDto == null) {
                 throw new ValidationException("Os dados do cliente são nulos.");
             }
             Cliente cliente = clienteDto.toEntity();
-            if ((cliente.getCpfcnpj() != null) && (cliente.getNome() != null)){
+            if ((cliente.getCpfcnpj() != null) && (cliente.getNome() != null)) {
                 if (DocumentoUtils.validarTamanhoCpfCnpj(cliente.getCpfcnpj().getValue()) && (DocumentoUtils.validarSituacao(cliente.getSituacao().getValue())
-                        && (DocumentoUtils.validarTipo(cliente.getTipo().getValue())))){
+                        && (DocumentoUtils.validarTipo(cliente.getTipo().getValue())))) {
                     if (this.verificaCpfcnpj(cliente.getCpfcnpj().getValue())) {
                         if (this.dao.insertCliente(cliente)) {
                             DocumentoUtils.gravaLog(this.getConnection(), 20, "Gravação de cliente");
@@ -96,22 +95,29 @@ public class ClienteService extends ServiceBase {
     public List<ClienteDto> getListClientes() throws Exception {
         List<Cliente> clientes = this.dao.getListClientes();
 
-        if (!clientes.isEmpty()) {
-            DocumentoUtils.gravaLog(this.getConnection(), 22, "Consulta de clientes");
-            return clientes.stream().map(ClienteDto::new).toList();
+        try{
+            if (!clientes.isEmpty()) {
+                DocumentoUtils.gravaLog(this.getConnection(), 22, "Consulta de clientes");
+                return clientes.stream().map(ClienteDto::new).toList();
+            }
+            return null;
+        } catch (Exception e){
+            throw new NullPointerException("Erro ao buscar lista de clientes: " + e.getMessage());
         }
-        return null;
     }
 
     public ClienteDto getClienteById(Integer id) throws Exception {
         Cliente cliente = this.dao.getCliente(id);
 
-        if (cliente != null) {
-            DocumentoUtils.gravaLog(this.getConnection(), 22, "Consulta de clientes");
-            return cliente.toDto();
+        try {
+            if (cliente != null) {
+                DocumentoUtils.gravaLog(this.getConnection(), 22, "Consulta de clientes");
+                return cliente.toDto();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao buscar cliente por ID: " + e.getMessage());
         }
-
-        return null;
     }
 
     public boolean verificaCpfcnpj(String cpfCnpj) throws Exception {

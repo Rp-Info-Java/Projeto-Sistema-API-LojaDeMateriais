@@ -2,6 +2,7 @@ package main.core.java.br.com.rpinfo.lorenzo.application.service;
 
 import br.framework.interfaces.IConnection;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.LogOperacoesDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.relatorios.LogOperacoesDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.relatorios.LogOperacoesDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
@@ -18,7 +19,11 @@ public class LogOperacoesService extends ServiceBase {
     }
 
     public List<LogOperacoesDto> getListLogOperacoes(Integer codigoDeUsuario, String tipoOperacao, String dataInicio, String dataFim) throws Exception {
-        DocumentoUtils.gravaLog(this.getConnection(), 70, "Consulta de log de operações");
-        return this.dao.getLogOperacoes(codigoDeUsuario, tipoOperacao, dataInicio, dataFim).stream().map(LogOperacoesDto::new).toList();
+        try{
+            DocumentoUtils.gravaLog(this.getConnection(), 70, "Consulta de log de operações");
+            return this.dao.getLogOperacoes(codigoDeUsuario, tipoOperacao, dataInicio, dataFim).stream().map(LogOperacoesDto::new).toList();
+        } catch (NullPointerException e) {
+            throw new NullPointerException("Erro ao consultar o log de operações: " + e.getMessage());
+        }
     }
 }

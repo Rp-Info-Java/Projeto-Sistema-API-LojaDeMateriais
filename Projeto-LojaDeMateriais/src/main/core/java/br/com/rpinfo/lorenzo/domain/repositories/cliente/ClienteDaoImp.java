@@ -2,7 +2,6 @@ package main.core.java.br.com.rpinfo.lorenzo.domain.repositories.cliente;
 
 import br.framework.classes.DataBase.*;
 import br.framework.interfaces.IConnection;
-import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Cliente;
 
 import java.sql.ResultSet;

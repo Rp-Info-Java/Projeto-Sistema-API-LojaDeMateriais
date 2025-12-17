@@ -5,13 +5,13 @@ import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosDetDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.*;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.movimentacoes.MovimentacoesDaoImp;
-import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDao;
-import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.vendedores.VendedoresDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
@@ -25,14 +25,12 @@ public class MovProdutoService extends ServiceBase {
     private MovimentacoesDao dao;
     private FornecedoresDao daoForn;
     private VendedoresDao daoVen;
-    private ProdutoDao daoProd;
 
     public MovProdutoService(IConnection connection) {
         super(connection);
         this.dao = new MovimentacoesDaoImp(connection);
         this.daoForn = new FornecedoresDaoImp(connection);
         this.daoVen = new VendedoresDaoImp(connection);
-        this.daoProd = new ProdutoDaoImp(connection);
     }
 
     public boolean adicionarEntradas(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
@@ -77,8 +75,10 @@ public class MovProdutoService extends ServiceBase {
             }
 
             return false;
-        } catch (Exception e) {
-            throw new Exception("Erro ao inserir entradas na movimentação: " + e.getMessage());
+        } catch (ValidationException e) {
+            throw new ValidationException("Erro ao inserir entradas na movimentação: " + e.getMessage());
+        } catch (Exception e){
+            throw new RuntimeException("Erro ao inserir entradas na movimentação: " + e.getMessage());
         }
     }
 
@@ -176,8 +176,8 @@ public class MovProdutoService extends ServiceBase {
                 }
                 return false;
             }
-        } catch (Exception e) {
-            throw new Exception("Erro ao inserir saidas na movimentação: " + e.getMessage());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("Erro ao inserir saidas na movimentação: " + e.getMessage());
         }
         return false;
     }
@@ -203,8 +203,8 @@ public class MovProdutoService extends ServiceBase {
                 return this.dao.cancelaMovimentacao(mvpc);
             }
             return false;
-        } catch (Exception e) {
-            throw new Exception("Erro ao cancelar movimentação: " + e.getMessage());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("Erro ao cancelar movimentação: " + e.getMessage());
         }
     }
 
@@ -212,24 +212,27 @@ public class MovProdutoService extends ServiceBase {
         List<MovProdutosC> list = this.dao.getListMovimentacoesC();
         List<MovProdutosD> listMovD = this.dao.getListMovimentacoesD();
 
-        if (!list.isEmpty()) {
-            if (!listMovD.isEmpty()) {
-                list.forEach(mvpc -> {
-                    mvpc.setItens(listMovD.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
-                });
-            }
+        try{
+            if (!list.isEmpty()) {
+                if (!listMovD.isEmpty()) {
+                    list.forEach(mvpc -> {
+                        mvpc.setItens(listMovD.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+                    });
+                }
 
-            DocumentoUtils.gravaLog(this.getConnection(), 52, "Consulta de movimentações");
-            return list.stream().map(MovProdutosCabDto::new).toList();
+                DocumentoUtils.gravaLog(this.getConnection(), 52, "Consulta de movimentações");
+                return list.stream().map(MovProdutosCabDto::new).toList();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao buscar lista com todas as movimentações: " + e.getMessage());
         }
-        return null;
     }
 
     public MovProdutosCabDto getMovimentacaoByTransaction(String transaction) throws Exception {
+        MovProdutosC mvpc = this.dao.getMovimentacaoC(transaction);
+        List<MovProdutosD> listD = this.dao.getMovimentacaoD(transaction);
         try {
-            MovProdutosC mvpc = this.dao.getMovimentacaoC(transaction);
-            List<MovProdutosD> listD = this.dao.getMovimentacaoD(transaction);
-
             if (mvpc != null) {
                 if (!listD.isEmpty()) {
                     mvpc.setItens(listD);
@@ -239,7 +242,7 @@ public class MovProdutoService extends ServiceBase {
             }
             return null;
         } catch (Exception e) {
-            throw new Exception("Erro ao cancelar movimentação: " + e.getMessage());
+            throw new NullPointerException("Erro ao cancelar movimentação: " + e.getMessage());
         }
     }
 
@@ -272,7 +275,7 @@ public class MovProdutoService extends ServiceBase {
         return false;
     }
 
-    public MovProdutosC validarConfiguracao(MovProdutosC mvpc, ConfiguracoesDto config) throws Exception {
+    public MovProdutosC validarConfiguracao(MovProdutosC mvpc, ConfiguracoesDto config) {
         if (mvpc != null && config != null) {
             if (config.getPercentualDescontos() > 0) {
                 if (Integer.parseInt(mvpc.getNumdcto().getValue()) == config.getCodigo()) {

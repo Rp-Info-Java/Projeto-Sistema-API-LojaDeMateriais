@@ -5,6 +5,7 @@ import br.framework.interfaces.IConnection;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Produtos;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ProdutoDaoImp extends Repository implements ProdutoDao {
@@ -14,7 +15,7 @@ public class ProdutoDaoImp extends Repository implements ProdutoDao {
         this.getManager().setProcessNullToDefaultValues(false);
     }
 
-    private Integer getNextCode() throws Exception {
+    private Integer getNextCode() throws SQLException {
         Integer codigo = 0;
         QueryBuilder sql = QueryBuilder.create(this.getConnection())
                 .select("max(prod_codigo) + 1 as prod_codigo")
@@ -43,7 +44,7 @@ public class ProdutoDaoImp extends Repository implements ProdutoDao {
     }
 
     @Override
-    public boolean insertProduto(Produtos produto) throws Exception {
+    public boolean insertProduto(Produtos produto) throws SQLException {
         produto.getCodigo().setValue(this.getNextCode());
         produto.toInsert();
         Transaction transaction = null;

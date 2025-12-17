@@ -3,12 +3,14 @@ package main.core.java.br.com.rpinfo.lorenzo.application.service;
 import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ConfiguracoesDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Configuracoes;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.configuracoes.ConfiguracoesDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.configuracoes.ConfiguracoesDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class ConfiguracoesService extends ServiceBase {
@@ -32,8 +34,10 @@ public class ConfiguracoesService extends ServiceBase {
                 }
             }
             return false;
-        } catch (Exception e) {
+        } catch (ValidationException e) {
             throw new ValidationException("Erro ao adicionar configuração: " + e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -89,8 +93,8 @@ public class ConfiguracoesService extends ServiceBase {
                 }
             }
             return false;
-        } catch (Exception e) {
-            throw new ValidationException("Erro ao atualizar configuração: " + e.getMessage());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("Erro ao atualizar configuração: " + e.getMessage());
         }
     }
 }

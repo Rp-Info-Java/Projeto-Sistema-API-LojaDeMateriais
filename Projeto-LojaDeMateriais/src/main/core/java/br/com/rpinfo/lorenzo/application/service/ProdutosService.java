@@ -3,6 +3,7 @@ package main.core.java.br.com.rpinfo.lorenzo.application.service;
 import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.ProdutosDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Produtos;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Data;
@@ -33,7 +34,7 @@ public class ProdutosService extends ServiceBase {
             //Garante que a embalagem seja em maiúsculo
             produtosDto.setEmbalagem(produtosDto.getEmbalagem().toUpperCase());
 
-            if(verificaEmbalagem(produtosDto.getEmbalagem())){
+            if (verificaEmbalagem(produtosDto.getEmbalagem())) {
                 Produtos produto = produtosDto.toEntity();
                 produto.getDtultcompra().setValue(data.getValue());
                 produto.getDtultvenda().setValue(data.getValue());
@@ -44,7 +45,7 @@ public class ProdutosService extends ServiceBase {
                 }
             }
         } catch (Exception e) {
-            throw new ValidationException(e.getMessage());
+            throw new ValidationException("Erro ao adicionar um produto: " + e.getMessage());
         }
         return false;
     }
@@ -52,22 +53,29 @@ public class ProdutosService extends ServiceBase {
     public List<ProdutosDto> getListProdutos() throws Exception {
         List<Produtos> produtos = this.dao.getListProdutos();
 
-        if (!produtos.isEmpty()) {
-            DocumentoUtils.gravaLog(this.getConnection(), 42, "Consulta de produtos");
-            return produtos.stream().map(ProdutosDto::new).toList();
+        try {
+            if (!produtos.isEmpty()) {
+                DocumentoUtils.gravaLog(this.getConnection(), 42, "Consulta de produtos");
+                return produtos.stream().map(ProdutosDto::new).toList();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao buscar a lista de produtos: " + e.getMessage());
         }
-        return null;
     }
 
     public ProdutosDto getProduto(Integer id) throws Exception {
         Produtos produto = this.dao.getProduto(id);
 
-        if (produto != null) {
-            DocumentoUtils.gravaLog(this.getConnection(), 42, "Consulta de produto");
-            return produto.toDto();
+        try {
+            if (produto != null) {
+                DocumentoUtils.gravaLog(this.getConnection(), 42, "Consulta de produto");
+                return produto.toDto();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao buscar produto: " + e.getMessage());
         }
-
-        return null;
     }
 
     public boolean atualizarProduto(ProdutosDto prodDto) throws Exception {
@@ -98,24 +106,27 @@ public class ProdutosService extends ServiceBase {
                     return true;
                 }
             }
-        } catch (Exception e) {
-            throw new Exception("Erro ao atualizar produto: " + e.getMessage());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("Erro ao atualizar produto: " + e.getMessage());
         }
         return false;
     }
 
     public boolean atualizarEstoque(Integer id, Double qtd) throws Exception {
         Produtos prod = this.dao.getProduto(id);
-
-        if(prod != null){
-            prod.getEstoque().setValue(prod.getEstoque().getValue() + qtd);
+        try {
+            if (prod != null) {
+                prod.getEstoque().setValue(prod.getEstoque().getValue() + qtd);
+            }
+            return this.dao.update(prod);
+        } catch (Exception e) {
+            throw new ValidationException("Houve um erro ao atualizar o estoque: " + e.getMessage());
         }
-        return this.dao.update(prod);
     }
 
-    public boolean verificaEmbalagem(String embalagem){
-        if(embalagem.equals("UN") || embalagem.equals("CX") || embalagem.equals("SC")
-                || embalagem.equals("PC") || embalagem.equals("MT")){
+    public boolean verificaEmbalagem(String embalagem) {
+        if (embalagem.equals("UN") || embalagem.equals("CX") || embalagem.equals("SC")
+                || embalagem.equals("PC") || embalagem.equals("MT")) {
             return true;
         }
         return false;

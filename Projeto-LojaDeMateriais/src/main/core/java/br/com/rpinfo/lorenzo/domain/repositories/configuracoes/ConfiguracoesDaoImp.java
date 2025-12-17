@@ -7,6 +7,7 @@ import br.framework.interfaces.IConnection;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Configuracoes;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ConfiguracoesDaoImp extends Repository implements ConfiguracoesDao{
@@ -16,7 +17,7 @@ public class ConfiguracoesDaoImp extends Repository implements ConfiguracoesDao{
         this.getManager().setProcessNullToDefaultValues(false);
     }
 
-    private Integer getNextCode() throws Exception {
+    private Integer getNextCode() throws SQLException {
         Integer codigo = 0;
         QueryBuilder sql = QueryBuilder.create(this.getConnection())
                 .select("max(conf_codigo) + 1 as conf_codigo")
@@ -35,7 +36,7 @@ public class ConfiguracoesDaoImp extends Repository implements ConfiguracoesDao{
     }
 
     @Override
-    public boolean insertConfiguracao(Configuracoes configuracoes) throws Exception {
+    public boolean insertConfiguracao(Configuracoes configuracoes) throws SQLException {
         configuracoes.getCodigo().setValue(this.getNextCode());
         configuracoes.toInsert();
         Transaction transaction = null;

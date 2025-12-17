@@ -6,6 +6,7 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Cliente;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Usuarios;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class UsuariosDaoImp extends Repository implements UsuariosDao {
@@ -15,7 +16,7 @@ public class UsuariosDaoImp extends Repository implements UsuariosDao {
         this.getManager().setProcessNullToDefaultValues(false);
     }
 
-    private Integer getNextCode() throws Exception {
+    private Integer getNextCode() throws SQLException {
         Integer codigo = 0;
         QueryBuilder sql = QueryBuilder.create(this.getConnection())
                 .select("max(usua_codigo) + 1 as usua_codigo")
@@ -34,7 +35,7 @@ public class UsuariosDaoImp extends Repository implements UsuariosDao {
     }
 
     @Override
-    public boolean insert(Usuarios usuarios) throws Exception {
+    public boolean insert(Usuarios usuarios) throws SQLException {
         usuarios.getCodigo().setValue(this.getNextCode());
         usuarios.toInsert();
         Transaction transaction = null;

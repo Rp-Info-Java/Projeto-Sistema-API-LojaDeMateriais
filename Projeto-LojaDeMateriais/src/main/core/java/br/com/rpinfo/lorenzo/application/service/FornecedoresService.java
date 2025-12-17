@@ -3,6 +3,7 @@ package main.core.java.br.com.rpinfo.lorenzo.application.service;
 import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.FornecedoresDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Fornecedores;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDao;
@@ -37,8 +38,10 @@ public class FornecedoresService extends ServiceBase{
                 }
             }
             return false;
-        } catch (Exception e) {
+        } catch (ValidationException e) {
             throw new ValidationException("Erro ao adicionar cliente: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -53,21 +56,29 @@ public class FornecedoresService extends ServiceBase{
     public List<FornecedoresDto> getListFornecedores() throws Exception {
         List<Fornecedores> fornecedores = this.dao.getListFornecedores();
 
-        if(!fornecedores.isEmpty()){
-            DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedores");
-            return fornecedores.stream().map(FornecedoresDto::new).toList();
+        try{
+            if(!fornecedores.isEmpty()){
+                DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedores");
+                return fornecedores.stream().map(FornecedoresDto::new).toList();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao buscar a lista de fornecedores: " + e.getMessage());
         }
-        return null;
     }
 
     public FornecedoresDto getFornecedorById(Integer id) throws Exception{
         Fornecedores fornecedor = this.dao.getFornecedor(id);
 
-        if(fornecedor != null){
-            DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedor");
-            return fornecedor.toDto();
+        try{
+            if(fornecedor != null){
+                DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedor");
+                return fornecedor.toDto();
+            }
+            return null;
+        } catch (Exception e){
+            throw new ValidationException("Erro ao buscar fornecedor por ID: " + e.getMessage());
         }
-        return null;
     }
 
     public boolean atualizarFornecedor(FornecedoresDto fornDto) throws Exception{
@@ -110,8 +121,8 @@ public class FornecedoresService extends ServiceBase{
                     return true;
                 }
             }
-        } catch (Exception e) {
-            throw new Exception("Erro ao atualizar o fornecedor: " + e.getMessage());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("Erro ao atualizar o fornecedor: " + e.getMessage());
         }
         return false;
     }

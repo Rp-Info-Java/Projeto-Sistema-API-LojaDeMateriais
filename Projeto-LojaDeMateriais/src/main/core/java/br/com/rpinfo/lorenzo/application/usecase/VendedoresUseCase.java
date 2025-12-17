@@ -6,6 +6,8 @@ import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.ResponseHandle
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.VendedoresDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.service.ClienteService;
 import main.core.java.br.com.rpinfo.lorenzo.application.service.VendedoresService;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.enums.MethodVersion;
 import main.core.java.br.com.rpinfo.lorenzo.infrastructure.datasource.db.ConnectionManager;
 
@@ -14,7 +16,7 @@ import java.sql.SQLException;
 public class VendedoresUseCase extends VendedoresService {
     public VendedoresUseCase(IConnection connection) { super(connection);}
 
-    public static Response inserirVendedor(VendedoresDto vendDto, MethodVersion methodVersion){
+    public static Response inserirVendedor(VendedoresDto vendDto, MethodVersion methodVersion) throws ValidationException {
         IConnection connection = null;
         VendedoresService business;
         try {
@@ -22,7 +24,7 @@ public class VendedoresUseCase extends VendedoresService {
             business = new VendedoresService(connection);
             return ResponseHandler.ok(business.adicionarVendedor(vendDto), methodVersion);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao inserir vendedor: " + e.getMessage());
+            throw new ValidationException("Erro ao inserir vendedor: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();
@@ -30,7 +32,7 @@ public class VendedoresUseCase extends VendedoresService {
         }
     }
 
-    public static Response getListaVendedores(MethodVersion methodVersion) throws SQLException {
+    public static Response getListaVendedores(MethodVersion methodVersion) throws NullPointerException {
         IConnection connection = null;
         VendedoresService business;
         try {
@@ -38,7 +40,7 @@ public class VendedoresUseCase extends VendedoresService {
             business = new VendedoresService(connection);
             return ResponseHandler.ok(business.getListVendedores(), methodVersion);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar lista de vendedores: " + e.getMessage());
+            throw new NullPointerException("Erro ao buscar lista de vendedores: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();
@@ -46,7 +48,7 @@ public class VendedoresUseCase extends VendedoresService {
         }
     }
 
-    public static Response getVendedorById(Integer id, MethodVersion methodVersion) throws SQLException {
+    public static Response getVendedorById(Integer id, MethodVersion methodVersion) throws NullPointerException {
         IConnection connection = null;
         VendedoresService business;
         try {
@@ -54,7 +56,7 @@ public class VendedoresUseCase extends VendedoresService {
             business = new VendedoresService(connection);
             return ResponseHandler.ok(business.getVendedorById(id), methodVersion);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar vendedor: " + e.getMessage());
+            throw new NullPointerException("Erro ao buscar vendedor: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();
@@ -62,7 +64,7 @@ public class VendedoresUseCase extends VendedoresService {
         }
     }
 
-    public static Response atualizaVendedor(VendedoresDto vendDto, MethodVersion methodVersion) throws SQLException {
+    public static Response atualizaVendedor(VendedoresDto vendDto, MethodVersion methodVersion) throws NullPointerException {
         IConnection connection = null;
         VendedoresService business;
         try {
@@ -70,7 +72,7 @@ public class VendedoresUseCase extends VendedoresService {
             business = new VendedoresService(connection);
             return ResponseHandler.ok(business.atualizarVendedor(vendDto), methodVersion);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao atualizar vendedor: " + e.getMessage());
+            throw new NullPointerException("Erro ao atualizar vendedor: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();

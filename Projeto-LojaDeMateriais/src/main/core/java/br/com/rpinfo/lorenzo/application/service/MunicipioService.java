@@ -3,6 +3,7 @@ package main.core.java.br.com.rpinfo.lorenzo.application.service;
 import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MunicipiosDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Municipios;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.municipios.MunicipiosDao;
@@ -19,7 +20,7 @@ public class MunicipioService extends ServiceBase{
         this.dao = new MunicipiosDaoImp(connection);
     }
 
-    public boolean adicionarMunicipio(MunicipiosDto municipiosDto) throws Exception {
+    public boolean adicionarMunicipio(MunicipiosDto municipiosDto) throws ValidationException {
         try{
             if(municipiosDto == null){
                 throw new ValidationException("Os dados do município são nulos.");
@@ -50,8 +51,8 @@ public class MunicipioService extends ServiceBase{
                     return true;
                 }
             }
-        }catch(Exception e){
-            throw new Exception("Erro ao atualizar o município: " + e.getMessage());
+        }catch(NullPointerException e){
+            throw new NullPointerException("Erro ao atualizar o município: " + e.getMessage());
         }
         return false;
     }
@@ -59,33 +60,45 @@ public class MunicipioService extends ServiceBase{
     public MunicipiosDto getMunicipioById(Integer id) throws Exception {
         Municipios muni = this.dao.getMunicipio(id);
 
-        if(muni != null){
-            DocumentoUtils.gravaLog(this.getConnection(), 82, "Consulta de Município por ID");
-            return muni.toDto();
-        }
+        try{
+            if(muni != null){
+                DocumentoUtils.gravaLog(this.getConnection(), 82, "Consulta de Município por ID");
+                return muni.toDto();
+            }
 
-        return null;
+            return null;
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao buscar município por ID: " + e.getMessage());
+        }
     }
 
     public List<MunicipiosDto> getListMunicipios() throws Exception {
         List<Municipios> municipios = this.dao.getListMunicipios();
 
-        if(!municipios.isEmpty()){
-            DocumentoUtils.gravaLog(this.getConnection(), 82, "Consulta de Municípios");
-            return municipios.stream().map(MunicipiosDto::new).toList();
-        }
+        try{
+            if(!municipios.isEmpty()){
+                DocumentoUtils.gravaLog(this.getConnection(), 82, "Consulta de Municípios");
+                return municipios.stream().map(MunicipiosDto::new).toList();
+            }
 
-        return null;
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao buscar a lista de municípios: " + e.getMessage());
+        }
     }
 
     public List<MunicipiosDto> getListMunicipiosByUf(String uf) throws Exception {
         List<Municipios> municipios = this.dao.getListMunicipiosByUf(uf);
 
-        if(!municipios.isEmpty()){
-            DocumentoUtils.gravaLog(this.getConnection(), 82, "Consulta de Municípios por UF");
-            return municipios.stream().map(MunicipiosDto::new).toList();
-        }
+        try{
+            if(!municipios.isEmpty()){
+                DocumentoUtils.gravaLog(this.getConnection(), 82, "Consulta de Municípios por UF");
+                return municipios.stream().map(MunicipiosDto::new).toList();
+            }
 
-        return null;
+            return null;
+        } catch (Exception e){
+            throw new ValidationException("Erro ao buscar município por UF: " + e.getMessage());
+        }
     }
 }

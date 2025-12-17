@@ -3,6 +3,7 @@ package main.core.java.br.com.rpinfo.lorenzo.application.service;
 import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.UsuariosDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Usuarios;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.usuarios.UsuariosDao;
@@ -23,21 +24,29 @@ public class UsuariosService extends ServiceBase {
     public List<UsuariosDto> getListUsuarios() throws Exception {
         List<Usuarios> usuarios = this.dao.getListUsuarios();
 
-        if(!usuarios.isEmpty()){
-            DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuários");
-            return usuarios.stream().map(UsuariosDto::new).toList();
+        try{
+            if(!usuarios.isEmpty()){
+                DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuários");
+                return usuarios.stream().map(UsuariosDto::new).toList();
+            }
+            return null;
+        }catch(Exception e){
+            throw new ValidationException("Erro ao buscar lista de usuários: " + e.getMessage());
         }
-        return null;
     }
 
     public UsuariosDto getUsuarioById(Integer id) throws Exception {
         Usuarios usuario = this.dao.getUsuario(id);
 
-        if(usuario != null){
-            DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuário por ID");
-            return usuario.toDto();
+        try{
+            if(usuario != null){
+                DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuário por ID");
+                return usuario.toDto();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao buscar usuário por ID: " + e);
         }
-        return null;
     }
 
     //getUsuario para usar no ConnectionManager e salvar o Usuário do sistema
@@ -91,8 +100,8 @@ public class UsuariosService extends ServiceBase {
                     return true;
                 }
             }
-        } catch (Exception e) {
-            throw new Exception("Erro ao atualizar o usuário: " + e.getMessage());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("Erro ao atualizar o usuário: " + e.getMessage());
         }
         return false;
     }

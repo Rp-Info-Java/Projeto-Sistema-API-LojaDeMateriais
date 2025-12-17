@@ -8,7 +8,6 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationExceptio
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.enums.MethodVersion;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 
 @RestController
 public class ClienteController {

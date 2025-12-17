@@ -5,6 +5,7 @@ import br.framework.classes.DataBase.*;
 import br.framework.interfaces.IConnection;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class FornecedoresDaoImp extends Repository implements FornecedoresDao {
@@ -15,7 +16,7 @@ public class FornecedoresDaoImp extends Repository implements FornecedoresDao {
     }
 
     //Feito para substituir os SEQUENCES no banco de dados (postgresql)
-    private Integer getNextCode() throws Exception {
+    private Integer getNextCode() throws SQLException {
         Integer codigo = 0;
         QueryBuilder sql = QueryBuilder.create(this.getConnection())
                 .select("max(forn_codigo) + 1 as forn_codigo")
@@ -34,7 +35,7 @@ public class FornecedoresDaoImp extends Repository implements FornecedoresDao {
     }
 
     @Override
-    public boolean insert(Fornecedores fornecedores) throws Exception {
+    public boolean insert(Fornecedores fornecedores) throws SQLException {
         fornecedores.getCodigo().setValue(this.getNextCode());
         fornecedores.toInsert();
         Transaction transaction = null;
@@ -82,7 +83,7 @@ public class FornecedoresDaoImp extends Repository implements FornecedoresDao {
     }
 
     @Override
-    public boolean update(Fornecedores fornecedores) throws Exception {
+    public boolean update(Fornecedores fornecedores){
         fornecedores.toUpdate("forn_codigo = " + fornecedores.getCodigo().getValue());
         Transaction transaction = null;
         try {

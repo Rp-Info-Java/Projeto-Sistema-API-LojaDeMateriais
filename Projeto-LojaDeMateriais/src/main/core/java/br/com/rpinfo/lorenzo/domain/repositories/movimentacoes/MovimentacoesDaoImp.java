@@ -4,10 +4,13 @@ import br.framework.classes.DataBase.QueryBuilder;
 import br.framework.classes.DataBase.Repository;
 import br.framework.classes.DataBase.Transaction;
 import br.framework.interfaces.IEntityClass;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 import br.framework.interfaces.IConnection;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosD;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao {
@@ -17,42 +20,54 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
         this.getManager().setProcessNullToDefaultValues(false);
     }
 
-    private String getNextTransaction() throws Exception{
-        QueryBuilder sql = QueryBuilder.create(this.getConnection())
-                .select("*")
-                .from(MovProdutosC.class)
-                .orderBy("mvpc_transacao DESC", true);
+    private String getNextTransaction() throws Exception {
+        try {
+            QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                    .select("*")
+                    .from(MovProdutosC.class)
+                    .orderBy("mvpc_transacao DESC", true);
 
-        List<MovProdutosC> lista = this.getManager().queryFactory(sql, MovProdutosC.class);
-        if(!lista.isEmpty()){
-            long transacao = Long.parseLong(lista.get(0).getTransacao().getValue());
-            return String.format("%08d", transacao + 1);
+            List<MovProdutosC> lista = this.getManager().queryFactory(sql, MovProdutosC.class);
+            if (!lista.isEmpty()) {
+                long transacao = Long.parseLong(lista.get(0).getTransacao().getValue());
+                return String.format("%08d", transacao + 1);
+            }
+            return "00000001";
+        } catch (Exception e) {
+            throw new ValidationException("Erro buscando próxima transação: " + e.getMessage());
         }
-        return "00000001";
     }
 
     @Override
     public MovProdutosC getMovimentacaoC(String transaction) throws Exception {
-        QueryBuilder sql = QueryBuilder.create(this.getConnection())
-                .select("*")
-                .from(MovProdutosC.class)
-                .where("mvpc_transacao", "=", transaction);
+        try {
+            QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                    .select("*")
+                    .from(MovProdutosC.class)
+                    .where("mvpc_transacao", "=", transaction);
 
-        List<MovProdutosC> list = this.getManager().queryFactory(sql, MovProdutosC.class);
-        if(!list.isEmpty()){
-            return list.get(0);
+            List<MovProdutosC> list = this.getManager().queryFactory(sql, MovProdutosC.class);
+            if (!list.isEmpty()) {
+                return list.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            throw new ValidationException("Erro buscando cabeçalho da movimentação: " + e.getMessage());
         }
-        return null;
     }
 
     @Override
     public List<MovProdutosD> getMovimentacaoD(String transaction) throws Exception {
-        QueryBuilder sql = QueryBuilder.create(this.getConnection())
-                .select("*")
-                .from(MovProdutosD.class)
-                .where("mvpd_transacao", "=", transaction);
+        try {
+            QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                    .select("*")
+                    .from(MovProdutosD.class)
+                    .where("mvpd_transacao", "=", transaction);
 
-        return this.getManager().queryFactory(sql.build(), MovProdutosD.class);
+            return this.getManager().queryFactory(sql.build(), MovProdutosD.class);
+        } catch (Exception e) {
+            throw new ValidationException("Erro buscando detalhamento da movimentação: " + e.getMessage());
+        }
     }
 
     @Override
@@ -76,7 +91,7 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
                 if (transaction != null) {
                     transaction.rollback();
                 }
-            } catch (Exception e1) {
+            } catch (SQLException e1) {
                 e1.printStackTrace();
             }
         }
@@ -86,19 +101,16 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
     @Override
     public boolean insertSaidas(MovProdutosC mvpc, String transacao) throws Exception {
         mvpc.toUpdate("mvpc_transacao = '" + transacao + "'");
-        /*mvpc.getItens().forEach(item -> {item.getTransacao().setValue(transacao);
-            item.toUpdate("mvpd_transacao ='" + transacao + "' AND mvpd_prod_codigo = '" + item.getProd_codigo().getValue() + "'");
-        });*/
         Transaction transaction = null;
         try {
             transaction = this.getConnection().getTransaction();
             transaction.addEntity(mvpc);
             transaction.addEntities((List<IEntityClass>) (List<?>) mvpc.getItens());
 
-            if(transaction.commit()){
+            if (transaction.commit()) {
                 return true;
             }
-        } catch (Exception e) {
+        } catch (ValidationException e) {
             e.printStackTrace();
             try {
                 if (transaction != null) {
@@ -120,10 +132,10 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
             transaction.addEntity(mvpc);
             transaction.addEntities((List<IEntityClass>) (List<?>) mvpc.getItens());
 
-            if(transaction.commit()){
+            if (transaction.commit()) {
                 return true;
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
             try {
                 if (transaction != null) {
@@ -137,22 +149,30 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
     }
 
     @Override
-    public List<MovProdutosC> getListMovimentacoesC() throws Exception {
-        QueryBuilder sql = QueryBuilder.create(this.getConnection())
-                .select("*")
-                .from(MovProdutosC.class)
-                .orderBy("mvpc_transacao");
+    public List<MovProdutosC> getListMovimentacoesC() {
+        try {
+            QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                    .select("*")
+                    .from(MovProdutosC.class)
+                    .orderBy("mvpc_transacao");
 
-        return this.getManager().queryFactory(sql.build(), MovProdutosC.class);
+            return this.getManager().queryFactory(sql.build(), MovProdutosC.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro buscando o cabeçalho da lista de movimentações: " + e.getMessage());
+        }
     }
 
     @Override
-    public List<MovProdutosD> getListMovimentacoesD() throws Exception {
-        QueryBuilder sql = QueryBuilder.create(this.getConnection())
-                .select("*")
-                .from(MovProdutosD.class)
-                .orderBy("mvpd_transacao");
+    public List<MovProdutosD> getListMovimentacoesD() {
+        try {
+            QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                    .select("*")
+                    .from(MovProdutosD.class)
+                    .orderBy("mvpd_transacao");
 
-        return this.getManager().queryFactory(sql.build(), MovProdutosD.class);
+            return this.getManager().queryFactory(sql.build(), MovProdutosD.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro buscando o detalhamento da lista de movimentações: " + e.getMessage());
+        }
     }
 }

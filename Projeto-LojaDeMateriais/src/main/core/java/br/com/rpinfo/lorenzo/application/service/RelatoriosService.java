@@ -3,6 +3,7 @@ package main.core.java.br.com.rpinfo.lorenzo.application.service;
 import br.framework.interfaces.IConnection;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.VendedoresDto;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosC;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosD;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Vendedores;
@@ -14,7 +15,7 @@ import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.util.List;
 
-public class RelatoriosService extends ServiceBase{
+public class RelatoriosService extends ServiceBase {
 
     private RelatoriosDao dao;
     private MovimentacoesDao daoMovD;
@@ -29,63 +30,83 @@ public class RelatoriosService extends ServiceBase{
         List<MovProdutosC> listMvpc = this.dao.getEntradas();
         List<MovProdutosD> listMvpd = this.daoMovD.getListMovimentacoesD();
 
-        if(!listMvpc.isEmpty()){
-            listMvpc.forEach(mvpc -> {
-                mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
-            });
-            DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entradas nas movimentações");
-            return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+        try {
+            if (!listMvpc.isEmpty()) {
+                listMvpc.forEach(mvpc -> {
+                    mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+                });
+                DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entradas nas movimentações");
+                return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro buscando entradas: " + e.getMessage());
         }
-        return null;
     }
 
     public List<MovProdutosCabDto> getSaidas() throws Exception {
         List<MovProdutosC> listMvpc = this.dao.getSaidas();
         List<MovProdutosD> listMvpd = this.daoMovD.getListMovimentacoesD();
 
-        if(!listMvpc.isEmpty()) {
-            listMvpc.forEach(mvpc -> {
-                mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
-            });
-            DocumentoUtils.gravaLog(this.getConnection(), 72, "Consulta de saídas nas movimentações");
-            return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+        try {
+            if (!listMvpc.isEmpty()) {
+                listMvpc.forEach(mvpc -> {
+                    mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+                });
+                DocumentoUtils.gravaLog(this.getConnection(), 72, "Consulta de saídas nas movimentações");
+                return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro buscando saídas: " + e.getMessage());
         }
-        return null;
     }
 
     public List<MovProdutosCabDto> getCanceladas() throws Exception {
         List<MovProdutosC> listMvpc = this.dao.getCanceladas();
         List<MovProdutosD> listMvpd = this.daoMovD.getListMovimentacoesD();
 
-        if(!listMvpc.isEmpty()) {
-            listMvpc.forEach(mvpc -> {
-                mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
-            });
-            DocumentoUtils.gravaLog(this.getConnection(), 73, "Consulta de movimentações canceladas");
-            return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+        try {
+            if (!listMvpc.isEmpty()) {
+                listMvpc.forEach(mvpc -> {
+                    mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+                });
+                DocumentoUtils.gravaLog(this.getConnection(), 73, "Consulta de movimentações canceladas");
+                return listMvpc.stream().map(MovProdutosCabDto::new).toList();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro buscando movimentações canceladas: " + e.getMessage());
         }
-        return null;
     }
 
     public List<VendedoresDto> getComissoes() throws Exception {
         List<Vendedores> vendedores = this.dao.getComissoes();
 
-        if(!vendedores.isEmpty()){
-            DocumentoUtils.gravaLog(this.getConnection(), 74, "Consulta de comissões dos vendedores");
-            return vendedores.stream().map(VendedoresDto::new).toList();
+        try {
+            if (!vendedores.isEmpty()) {
+                DocumentoUtils.gravaLog(this.getConnection(), 74, "Consulta de comissões dos vendedores");
+                return vendedores.stream().map(VendedoresDto::new).toList();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro buscando comissões: " + e.getMessage());
         }
-        return null;
     }
 
     public MovProdutosCabDto getEntradaTransacao(String transaction) throws Exception {
         MovProdutosC mvpc = this.dao.getMovimentacaoEntraE(transaction);
         List<MovProdutosD> mvpdList = this.daoMovD.getListMovimentacoesD();
 
-        if(mvpc != null){
-            mvpc.setItens(mvpdList.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
-            DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entrada na movimentação");
-            return mvpc.toDto();
+        try {
+            if (mvpc != null) {
+                mvpc.setItens(mvpdList.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+                DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entrada na movimentação");
+                return mvpc.toDto();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro buscando entrada: " + e.getMessage());
         }
-        return null;
     }
 }

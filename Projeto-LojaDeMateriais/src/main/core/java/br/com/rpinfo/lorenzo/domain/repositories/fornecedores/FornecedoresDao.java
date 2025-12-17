@@ -3,11 +3,12 @@ package main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Fornecedores;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public interface FornecedoresDao{
-    boolean insert (Fornecedores fornecedores) throws Exception;
+    boolean insert (Fornecedores fornecedores) throws SQLException;
 
     boolean update (Fornecedores fornecedores) throws Exception;
 

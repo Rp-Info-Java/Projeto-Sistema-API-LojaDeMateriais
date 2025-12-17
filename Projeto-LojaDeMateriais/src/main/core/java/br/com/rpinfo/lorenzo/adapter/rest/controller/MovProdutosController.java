@@ -3,33 +3,35 @@ package main.core.java.br.com.rpinfo.lorenzo.adapter.rest.controller;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.Response;
 import main.core.java.br.com.rpinfo.lorenzo.application.dto.MovProdutosCabDto;
 import main.core.java.br.com.rpinfo.lorenzo.application.usecase.MovProdutoUseCase;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
+import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.enums.MethodVersion;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MovProdutosController {
     @PostMapping("/{version}/movimentacoes/insertEntrada")
-    public Response insertEntradas(@PathVariable String version, @RequestBody MovProdutosCabDto mvpcDto) throws Exception {
+    public Response insertEntradas(@PathVariable String version, @RequestBody MovProdutosCabDto mvpcDto) throws ValidationException {
         return MovProdutoUseCase.insertEntradas(mvpcDto, MethodVersion.fromValue(version));
     }
 
     @PutMapping("/{version}/movimentacoes/insertSaidas")
-    public Response insertSaidas(@PathVariable String version, @RequestBody MovProdutosCabDto mvpcDto) throws Exception {
+    public Response insertSaidas(@PathVariable String version, @RequestBody MovProdutosCabDto mvpcDto) throws NullPointerException {
         return MovProdutoUseCase.insertSaidas(mvpcDto, MethodVersion.fromValue(version));
     }
 
     @GetMapping("/{version}/movimentacoes/getListMovimentacoesC")
-    public Response getListMovimentacoesC(@PathVariable String version) throws Exception {
+    public Response getListMovimentacoesC(@PathVariable String version) throws NullPointerException {
         return MovProdutoUseCase.getListMovimentacoesC(MethodVersion.fromValue(version));
     }
 
     @PutMapping("/{version}/{transaction}/movimentacoes/cancelarMovimentacao")
-    public Response cancelarMovimentacao(@PathVariable String version, @PathVariable String transaction) throws Exception {
+    public Response cancelarMovimentacao(@PathVariable String version, @PathVariable String transaction) throws NullPointerException {
         return MovProdutoUseCase.cancelarMovimentacao(transaction, MethodVersion.fromValue(version));
     }
 
     @GetMapping("/{version}/{transaction}/movimentacoes/getMovimentacaoByTransaction")
-    public Response getMovimentacao(@PathVariable String version, @PathVariable String transaction) throws Exception {
+    public Response getMovimentacao(@PathVariable String version, @PathVariable String transaction) throws NullPointerException {
         return MovProdutoUseCase.getMovimentacaoByTransac(transaction, MethodVersion.fromValue(version));
     }
 }
