@@ -66,6 +66,7 @@ public class MovProdutoService extends ServiceBase {
                 Data data = new Data();
                 Date dateJava = new Date();
                 data.setValue(dateJava);
+                mvpc.getDatamvto().setValue(data.getValue());
 
                 for (int i = 0; i < listD.size(); i++) {
                     listD.get(i).getStatus().setValue("N");

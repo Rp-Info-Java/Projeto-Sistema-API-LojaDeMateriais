@@ -80,19 +80,34 @@ public class UsuariosService extends ServiceBase {
                     usua.getNome().setValue(usuariosDto.getNome());
                 }
                 if(!Strings.isNullOrEmpty(usuariosDto.getCadastros())){
-                    usua.getCadastros().setValue(usuariosDto.getCadastros());
+                    if(DocumentoUtils.validarCamposConfig(usuariosDto.getCadastros())){
+                        usua.getCadastros().setValue(usuariosDto.getCadastros());
+                    }
                 }
                 if(!Strings.isNullOrEmpty(usuariosDto.getEntradas())){
-                    usua.getEntradas().setValue(usuariosDto.getEntradas());
+                    if(DocumentoUtils.validarCamposConfig(usuariosDto.getEntradas())){
+                        usua.getEntradas().setValue(usuariosDto.getEntradas());
+                    }
                 }
                 if(!Strings.isNullOrEmpty(usuariosDto.getSaidas())){
-                    usua.getCancel().setValue(usuariosDto.getCancelado());
+                    if(DocumentoUtils.validarCamposConfig(usuariosDto.getSaidas())){
+                        usua.getSaidas().setValue(usuariosDto.getSaidas());
+                    }
+                }
+                if(!Strings.isNullOrEmpty(usuariosDto.getCancelado())){
+                    if(DocumentoUtils.validarCamposConfig(usuariosDto.getCancelado())){
+                        usua.getCancel().setValue(usuariosDto.getCancelado());
+                    }
                 }
                 if(!Strings.isNullOrEmpty(usuariosDto.getRelatorio())){
-                    usua.getRelat().setValue(usuariosDto.getRelatorio());
+                    if(DocumentoUtils.validarCamposConfig(usuariosDto.getRelatorio())){
+                        usua.getRelat().setValue(usuariosDto.getRelatorio());
+                    }
                 }
                 if(!Strings.isNullOrEmpty(usuariosDto.getConfiguracoes())){
-                    usua.getConfig().setValue(usuariosDto.getConfiguracoes());
+                    if(DocumentoUtils.validarCamposConfig(usuariosDto.getCadastros())){
+                        usua.getConfig().setValue(usuariosDto.getConfiguracoes());
+                    }
                 }
                 DocumentoUtils.gravaLog(this.getConnection(), 6, "Atualização de usuário");
                 if(this.dao.update(usua)){

@@ -1,6 +1,7 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.dto;
 
 import br.framework.classes.dto.annotations.Length;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.BaseDto;
@@ -8,21 +9,33 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Produtos;
 
 import java.util.Date;
 
+@Schema(description = "Dados do produto")
 @Getter
 @Setter
 public class ProdutosDto  extends BaseDto {
     private Integer codigo;
+    @Schema(description = "Descrição do produto", example = "Produto Teste")
     private String descricao;
+    @Schema(description = "Marca do Produto", example = "Kellogs")
     private String marca;
+    @Schema(description = "Grupo do Produto", example = "Grupo Parati")
     private String grupo;
+    @Schema(description = "Departamento do Produto", example = "Departamento Parati")
     private String departamento;
     @Length(max = 2)
+    @Schema(description = "Embalagem do Produto", example = "2")
     private String embalagem;
+    @Schema(description = "Quantia de embalagem do Produto", example = "2")
     private Integer quantiaEmbalagem;
+    @Schema(description = "Preço de venda do Produto", example = "10")
     private Double precoVenda;
+    @Schema(description = "Preço de compra do Produto", example = "10")
     private Double precoCompra;
+    @Schema(description = "Quantia de estoque disponível para o produto", example = "10")
     private Double estoque;
+    @Schema(description = "Data da última compra (Não deve ser preenchida)")
     private Date dataUltimaCompra;
+    @Schema(description = "Data da última venda (Não deve ser preenchida)")
     private Date dataUltimaVenda;
 
     public ProdutosDto(){

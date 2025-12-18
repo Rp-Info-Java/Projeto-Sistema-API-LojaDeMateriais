@@ -1,27 +1,36 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.dto;
 
 import br.framework.classes.dto.annotations.Length;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.BaseDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Usuarios;
 
+@Schema(description = "Dados do usuário")
 @Getter
 @Setter
 public class UsuariosDto extends BaseDto {
     private Integer codigo;
+    @Schema(description = "Nome do usuário", example = "Kallavan")
     private String nome;
     @Length(max = 1)
+    @Schema(description = "Permissão de cadastros (S ou N)", example = "S")
     private String cadastros;
     @Length(max = 1)
+    @Schema(description = "Permissão de entradas (S ou N)", example = "S")
     private String entradas;
     @Length(max = 1)
+    @Schema(description = "Permissão de saídas (S ou N)", example = "S")
     private String saidas;
     @Length(max = 1)
+    @Schema(description = "Permissão de cancelados (S ou N)", example = "S")
     private String cancelado;
     @Length(max = 1)
+    @Schema(description = "Permissão de relatórios (S ou N)", example = "S")
     private String relatorio;
     @Length(max = 1)
+    @Schema(description = "Permissão de configurações (S ou N)", example = "S")
     private String configuracoes;
 
     public UsuariosDto(){

@@ -6,18 +6,23 @@ import main.core.java.br.com.rpinfo.lorenzo.application.dto.FornecedoresDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Fornecedores;
+import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Municipios;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.fornecedores.FornecedoresDaoImp;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.municipios.MunicipiosDao;
+import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.municipios.MunicipiosDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
 import java.util.List;
 
 public class FornecedoresService extends ServiceBase{
     private FornecedoresDao dao;
+    private MunicipiosDao daoMuni;
 
     public FornecedoresService(IConnection connection){
         super(connection);
         this.dao = new FornecedoresDaoImp(connection);
+        this.daoMuni = new MunicipiosDaoImp(connection);
     }
 
     public boolean adicionarFornecedor(FornecedoresDto fornDto) throws ValidationException{
@@ -27,9 +32,16 @@ public class FornecedoresService extends ServiceBase{
             }
             Fornecedores forn = fornDto.toEntity();
             if ((forn.getCpfcnpj() != null) && (forn.getSituacao() != null) && (forn.getNome() != null) && (forn.getTipo() != null)) {
-                if (DocumentoUtils.validarTamanhoCpfCnpj(forn.getCpfcnpj().getValue()) && DocumentoUtils.validarTipo(forn.getTipo().getValue())
-                        && DocumentoUtils.validarSituacao(forn.getSituacao().getValue())) {
+                if (DocumentoUtils.validarTamanhoCpfCnpj(forn.getCpfcnpj().getValue()) && DocumentoUtils.validarTipo(forn.getTipo().getValue())) {
                     if (this.verificaCpfcnpj(forn.getCpfcnpj().getValue())) {
+                        forn.getSituacao().setValue("N");
+                        Municipios muni = this.daoMuni.getMunicipio(fornDto.getCodigoMunicipio());
+                        if(muni != null){
+                            forn.getMuni_codigo().setValue(muni.getCodigo().getValue());
+                            forn.getMuni_nome().setValue(muni.getNome().getValue());
+                        } else{
+                            return false;
+                        }
                         if(this.dao.insert(forn)){
                             DocumentoUtils.gravaLog(this.getConnection(), 30, "Gravação de fornecedor");
                             return true;

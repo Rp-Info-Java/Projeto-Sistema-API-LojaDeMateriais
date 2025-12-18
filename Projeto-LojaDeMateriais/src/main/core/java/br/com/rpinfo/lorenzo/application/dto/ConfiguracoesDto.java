@@ -1,23 +1,29 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.dto;
 
 import br.framework.classes.dto.annotations.Length;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.BaseDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Configuracoes;
 
+@Schema(description = "Dados das configurações")
 @Getter
 @Setter
 public class ConfiguracoesDto extends BaseDto {
-
     private Integer codigo;
+    @Schema(description = "Nome da empresa", example = "Empresa Teste")
     private String nomeEmpresa;
+    @Schema(description = "Percentual de descontos (Será aplicado em todas as movimentações)", example = "10")
     private Double percentualDescontos;
     @Length(max = 1)
+    @Schema(description = "Validação de saídas (S ou N)", example = "N")
     private String validaSaidas;
     @Length(max = 1)
+    @Schema(description = "Validação de fornecedores (S ou N)", example = "N")
     private String validaFornecedor;
     @Length(max = 1)
+    @Schema(description = "Validação de clientes (S ou N)", example = "N")
     private String validaCliente;
 
     public ConfiguracoesDto(){

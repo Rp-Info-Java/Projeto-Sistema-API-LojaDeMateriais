@@ -84,7 +84,11 @@ public class ProdutosService extends ServiceBase {
                     prod.getDpto().setValue(prodDto.getDepartamento());
                 }
                 if (!Strings.isNullOrEmpty(prodDto.getEmbalagem())) {
-                    prod.getEmbalagem().setValue(prodDto.getEmbalagem());
+                    if (verificaEmbalagem(prodDto.getEmbalagem())) {
+                        prod.getEmbalagem().setValue(prodDto.getEmbalagem());
+                    } else{
+                        return false;
+                    }
                 }
                 if (prodDto.getQuantiaEmbalagem() >= 0) {
                     prod.getQembalagem().setValue(prodDto.getQuantiaEmbalagem());
