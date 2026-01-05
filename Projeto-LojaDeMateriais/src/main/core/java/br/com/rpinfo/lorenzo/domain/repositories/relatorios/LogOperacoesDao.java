@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface LogOperacoesDao {
-    List<LogOperacoes> getLogOperacoes(Integer codigoDeUsuario, String tipoOperacao, String dataInicio, String dataFim) throws Exception;
+    List<LogOperacoes> getLogOperacoes(Integer codigoDeUsuario, String tipoOperacao, String dataInicio, String dataFim, Integer codigoOperacao) throws Exception;
 }

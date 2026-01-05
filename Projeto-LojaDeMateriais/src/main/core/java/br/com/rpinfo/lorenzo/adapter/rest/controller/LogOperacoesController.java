@@ -30,9 +30,10 @@ public class LogOperacoesController {
                                          @RequestParam(required = false) Integer codigoDeUsuario,
                                          @RequestParam(required = false) String tipoOperacao,
                                          @RequestParam(required = false) String dataInicio,
-                                         @RequestParam(required = false) String dataFim) throws NullPointerException {
+                                         @RequestParam(required = false) String dataFim,
+                                         @RequestParam(required = false) Integer codigoOperacao) throws NullPointerException {
         return LogOperacoesUseCase.getListaLogOperacoes(MethodVersion.fromValue(version),
-                codigoDeUsuario, tipoOperacao, dataInicio, dataFim);
+                codigoDeUsuario, tipoOperacao, dataInicio, dataFim, codigoOperacao);
     }
 
 }

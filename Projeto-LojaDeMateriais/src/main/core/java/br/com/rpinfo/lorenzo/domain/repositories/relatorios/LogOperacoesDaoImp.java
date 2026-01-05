@@ -18,7 +18,7 @@ public class LogOperacoesDaoImp extends Repository implements LogOperacoesDao {
     }
 
     @Override
-    public List<LogOperacoes> getLogOperacoes(Integer codigoDeUsuario, String tipoOperacao, String dataInicio, String dataFim) throws Exception {
+    public List<LogOperacoes> getLogOperacoes(Integer codigoDeUsuario, String tipoOperacao, String dataInicio, String dataFim, Integer codigoOperacao) throws Exception {
         try{
             QueryBuilder sql = QueryBuilder.create(this.getConnection())
                     .select("*")                                           //quando for fazer a pesquisa por campos específicos, sempre lembrar de por a vírgula após o ult. campo
@@ -38,6 +38,9 @@ public class LogOperacoesDaoImp extends Repository implements LogOperacoesDao {
             if(dataFim != null){
                 Date dataF = DocumentoUtils.parseData(dataFim);
                 sql.and("log_data", "<=", dataF);
+            }
+            if(codigoOperacao != null){
+                sql.and("log_codigo", "=", codigoOperacao);
             }
             return this.getManager().queryFactory(sql.build(), LogOperacoes.class);
         }catch (SQLException e){

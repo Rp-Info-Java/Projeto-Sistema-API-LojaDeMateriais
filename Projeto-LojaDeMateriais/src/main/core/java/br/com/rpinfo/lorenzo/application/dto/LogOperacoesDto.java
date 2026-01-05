@@ -1,6 +1,7 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.dto;
 
 import br.framework.classes.dto.annotations.Length;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.BaseDto;
@@ -8,15 +9,19 @@ import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.LogOperacoes;
 
 import java.util.Date;
 
+@Schema(description = "Dados do log de operações")
 @Getter
 @Setter
 public class LogOperacoesDto extends BaseDto {
+    @Schema(description = "Código da operação realizada (ex: 30-39 = Operações com fornecedor, 50-59 = Operações com movimentações, etc.", example = "32")
     private Integer codigo;
     private Date data;
     @Length(max=8)
     private String hora;
+    @Schema(description = "Código do usuario que efetivou a ação", example = "1")
     private Integer codigoUsuario;
     @Length(max=255)
+    @Schema(description = "Descrição da operação", example = "Adicionado um novo usuário ao sistema")
     private String descricao;
 
     public LogOperacoesDto(){super();}

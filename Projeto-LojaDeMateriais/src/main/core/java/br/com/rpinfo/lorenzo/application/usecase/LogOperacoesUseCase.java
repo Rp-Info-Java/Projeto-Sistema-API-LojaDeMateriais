@@ -14,13 +14,13 @@ public class LogOperacoesUseCase extends LogOperacoesService {
         super(connection);
     }
 
-    public static Response getListaLogOperacoes(MethodVersion methodVersion, Integer codigoDeUsuario, String tipoOperacao, String dataInicio, String dataFim) throws NullPointerException {
+    public static Response getListaLogOperacoes(MethodVersion methodVersion, Integer codigoDeUsuario, String tipoOperacao, String dataInicio, String dataFim, Integer codigoOperacao) throws NullPointerException {
         IConnection connection = null;
         LogOperacoesService business;
         try {
             connection = ConnectionManager.newConnection();
             business = new LogOperacoesService(connection);
-            return ResponseHandler.ok(business.getListLogOperacoes(codigoDeUsuario, tipoOperacao, dataInicio, dataFim), methodVersion);
+            return ResponseHandler.ok(business.getListLogOperacoes(codigoDeUsuario, tipoOperacao, dataInicio, dataFim, codigoOperacao), methodVersion);
         } catch (Exception e) {
             throw new NullPointerException("Erro ao buscar lista de log de operações: " + e.getMessage());
         } finally{

@@ -1,22 +1,30 @@
 package main.core.java.br.com.rpinfo.lorenzo.application.dto;
 
 import br.framework.classes.dto.annotations.Length;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import main.core.java.br.com.rpinfo.lorenzo.adapter.rest.response.BaseDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.MovProdutosD;
 
+@Schema(description = "Dados do detalhamento de movimentações do produto")
 @Getter
 @Setter
 public class MovProdutosDetDto extends BaseDto {
     private String transacao;
     @Length(max = 1)
+    @Schema(description = "Status do movimento (N ou C)", example = "N")
     private String status;
+    @Schema(description = "Codigo do produto", example = "1")
     private Integer codigoProduto;
+    @Schema(description = "Quantidade do produto", example = "1")
     private Double quantidade;
     private Double valorDesc;
+    @Schema(description = "Valor do acréscimo", example = "1")
     private Double valorAcrescimo;
+    @Schema(description = "Valor outros", example = "100")
     private Double valorOutros;
+    @Schema(description = "Valor total", example = "100")
     private Double valorTotal;
 
     public MovProdutosDetDto(){
