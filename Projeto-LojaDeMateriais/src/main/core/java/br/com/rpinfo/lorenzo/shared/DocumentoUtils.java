@@ -155,32 +155,13 @@ public final class DocumentoUtils {
         logMap.put(90, "Gravação de Vendedor"); //Log Vendedores entre 90 e 99
         logMap.put(91, "Edição de dados de Vendedor");
         logMap.put(92, "Consulta de dados de Vendedor(es)");
-
-       // return logMap.containsKey(codigoLog);
     }
 
     public static boolean logs(Integer codigoLog){
         return logMap.containsKey(codigoLog);
     }
 
-    //Criar função para salvar o mapping das mensagens (aqui retorna o mapping)
     public static String getLogDescription(Integer codigoLog){
         return logMap.get(codigoLog);
     }
-
-    /*private static String getLogDescription(Integer codigoLog) { //aqui retorna a descrição)
-        Map<Integer, String> logMap2 = new HashMap<>();
-        logMap2.put(1, "Gravação de configuração");
-        logMap2.put(2, "Gravação de cliente");
-        logMap2.put(3, "Gravação de fornecedor");
-        logMap2.put(4, "Gravação de produto");
-        logMap2.put(5, "Gravação de movimentação");
-        logMap2.put(6, "Gravação de usuário");
-        logMap2.put(7, "Gravação de tipo de documento");
-        logMap2.put(8, "Gravação de tipo de movimentação");
-        logMap2.put(9, "Gravação de tipo de produto");
-        logMap2.put(10, "Gravação de tipo de situação");
-
-        return logMap2.get(codigoLog);
-    }*/
 }
