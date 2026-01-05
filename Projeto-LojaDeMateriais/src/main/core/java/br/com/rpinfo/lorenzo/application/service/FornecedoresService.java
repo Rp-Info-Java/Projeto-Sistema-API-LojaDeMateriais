@@ -43,7 +43,7 @@ public class FornecedoresService extends ServiceBase{
                             return false;
                         }
                         if(this.dao.insert(forn)){
-                            DocumentoUtils.gravaLog(this.getConnection(), 30, "Gravação de fornecedor");
+                            DocumentoUtils.gravaLog(this.getConnection(), 30, "Gravação de um novo fornecedor no banco de dados");
                             return true;
                         }
                     }
@@ -70,7 +70,7 @@ public class FornecedoresService extends ServiceBase{
 
         try{
             if(!fornecedores.isEmpty()){
-                DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedores");
+                DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta da lista com todos os fornecedores disponíveis no sistema");
                 return fornecedores.stream().map(FornecedoresDto::new).toList();
             }
             return null;
@@ -84,7 +84,7 @@ public class FornecedoresService extends ServiceBase{
 
         try{
             if(fornecedor != null){
-                DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de Fornecedor");
+                DocumentoUtils.gravaLog(this.getConnection(), 32, "Consulta de um fornecedor específico pelo seu ID");
                 return fornecedor.toDto();
             }
             return null;
@@ -129,7 +129,7 @@ public class FornecedoresService extends ServiceBase{
                     forn.getFone().setValue(fornDto.getTelefone());
                 }
                 if(this.dao.update(forn)) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 31, "Edição de dados de fornecedor");
+                    DocumentoUtils.gravaLog(this.getConnection(), 31, "Edição de campo(s) de um fornecedor específico");
                     return true;
                 }
             }

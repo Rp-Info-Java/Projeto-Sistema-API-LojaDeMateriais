@@ -32,7 +32,7 @@ public class ClienteService extends ServiceBase {
                         && (DocumentoUtils.validarTipo(cliente.getTipo().getValue())))) {
                     if (this.verificaCpfcnpj(cliente.getCpfcnpj().getValue())) {
                         if (this.dao.insertCliente(cliente)) {
-                            DocumentoUtils.gravaLog(this.getConnection(), 20, "Gravação de cliente");
+                            DocumentoUtils.gravaLog(this.getConnection(), 20, "Gravação de cliente no banco de dados");
                             return true;
                         }
                     }
@@ -82,7 +82,7 @@ public class ClienteService extends ServiceBase {
                     clie.getFone().setValue(clienteDto.getTelefone());
                 }
                 if (this.dao.updateCliente(clie)) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 21, "Edição de dados de cliente");
+                    DocumentoUtils.gravaLog(this.getConnection(), 21, "Atualização de campos de informações do cliente no banco de dados");
                     return true;
                 }
             }
@@ -97,7 +97,7 @@ public class ClienteService extends ServiceBase {
 
         try{
             if (!clientes.isEmpty()) {
-                DocumentoUtils.gravaLog(this.getConnection(), 22, "Consulta de clientes");
+                DocumentoUtils.gravaLog(this.getConnection(), 22, "Consulta da lista de clientes gravados no banco de dados");
                 return clientes.stream().map(ClienteDto::new).toList();
             }
             return null;
@@ -111,7 +111,7 @@ public class ClienteService extends ServiceBase {
 
         try {
             if (cliente != null) {
-                DocumentoUtils.gravaLog(this.getConnection(), 22, "Consulta de clientes");
+                DocumentoUtils.gravaLog(this.getConnection(), 22, "Consulta de um cliente especifíco por ID");
                 return cliente.toDto();
             }
             return null;

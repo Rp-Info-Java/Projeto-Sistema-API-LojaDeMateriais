@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class DocumentoUtils {
+    private static final Map<Integer, String> logMap = new HashMap<>();
     private DocumentoUtils() {
     }
 
@@ -84,7 +85,7 @@ public final class DocumentoUtils {
         return Date.from(data.atStartOfDay(ZoneId.of("America/Sao_Paulo")).toInstant());
     }
 
-    public static void gravaLog(IConnection connection, Integer codigoLog, String descricao) {
+    public static void gravaLog(IConnection connection, Integer codigoLog, String agrupamento) {
         LogOperacoes log = new LogOperacoes();
         Transaction transaction = null;
         try {
@@ -92,7 +93,8 @@ public final class DocumentoUtils {
                 return;
             }
             log.getCodigo().setValue(codigoLog);
-            log.getDescricao().setValue(descricao);
+            log.getDescricao().setValue(getLogDescription(codigoLog));
+            log.getAgrupamento().setValue(agrupamento);
             log.getData().setValue(connection.getCurrentDate());
             log.getHora().setValue(formatarHorario(LocalTime.now()));
             log.getUsua_codigo().setValue(ConnectionManager.getInstance().getUsuario().getCodigo().getValue());
@@ -113,8 +115,9 @@ public final class DocumentoUtils {
         }
     }
 
-    public static boolean logs(Integer codigoLog) {   //verificaLog e retorna boolean
-        Map<Integer, String> logMap = new HashMap<>();
+    // Não há problema em posicionar o bloco static abaixo de outras funções, visto que nenhum dos dados abaixo
+    // será alterado durante a execução do código
+    static {
         logMap.put(10, "Gravação de configuração");  //Todas os logs relacionados a configuração serão entre 10 e 19
         logMap.put(11, "Edição nas configurações");  //Todas os logs relacionados a configuração serão entre 10 e 19
         logMap.put(12, "Consulta de configurações");  //Todas os logs relacionados a configuração serão entre 10 e 19
@@ -153,12 +156,19 @@ public final class DocumentoUtils {
         logMap.put(91, "Edição de dados de Vendedor");
         logMap.put(92, "Consulta de dados de Vendedor(es)");
 
+       // return logMap.containsKey(codigoLog);
+    }
+
+    public static boolean logs(Integer codigoLog){
         return logMap.containsKey(codigoLog);
     }
 
     //Criar função para salvar o mapping das mensagens (aqui retorna o mapping)
+    public static String getLogDescription(Integer codigoLog){
+        return logMap.get(codigoLog);
+    }
 
-    private static String getLogDescription(Integer codigoLog) { //aqui retorna a descrição)
+    /*private static String getLogDescription(Integer codigoLog) { //aqui retorna a descrição)
         Map<Integer, String> logMap2 = new HashMap<>();
         logMap2.put(1, "Gravação de configuração");
         logMap2.put(2, "Gravação de cliente");
@@ -172,5 +182,5 @@ public final class DocumentoUtils {
         logMap2.put(10, "Gravação de tipo de situação");
 
         return logMap2.get(codigoLog);
-    }
+    }*/
 }

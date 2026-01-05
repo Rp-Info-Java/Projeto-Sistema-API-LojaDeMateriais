@@ -26,7 +26,7 @@ public class UsuariosService extends ServiceBase {
 
         try{
             if(!usuarios.isEmpty()){
-                DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuários");
+                DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de todos os usuários do sistema");
                 return usuarios.stream().map(UsuariosDto::new).toList();
             }
             return null;
@@ -40,7 +40,7 @@ public class UsuariosService extends ServiceBase {
 
         try{
             if(usuario != null){
-                DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuário por ID");
+                DocumentoUtils.gravaLog(this.getConnection(), 62, "Consulta de usuário específico por ID");
                 return usuario.toDto();
             }
             return null;
@@ -62,7 +62,7 @@ public class UsuariosService extends ServiceBase {
             Usuarios usuarios = usuariosDto.toEntity();
             if (usuarios.getNome().getValue() != null) {
                 if (this.dao.insert(usuarios)) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 60, "Gravação de usuário");
+                    DocumentoUtils.gravaLog(this.getConnection(), 60, "Gravação de um novo usuário no sistema");
                     return true;
                 }
             }
@@ -109,9 +109,8 @@ public class UsuariosService extends ServiceBase {
                         usua.getConfig().setValue(usuariosDto.getConfiguracoes());
                     }
                 }
-                DocumentoUtils.gravaLog(this.getConnection(), 6, "Atualização de usuário");
                 if(this.dao.update(usua)){
-                    DocumentoUtils.gravaLog(this.getConnection(), 61, "Atualização de dados do usuário");
+                    DocumentoUtils.gravaLog(this.getConnection(), 61, "Atualização de dados de um usuário específico");
                     return true;
                 }
             }

@@ -20,7 +20,7 @@ public class LogOperacoesService extends ServiceBase {
 
     public List<LogOperacoesDto> getListLogOperacoes(Integer codigoDeUsuario, String tipoOperacao, String dataInicio, String dataFim, Integer codigoOperacao) throws Exception {
         try{
-            DocumentoUtils.gravaLog(this.getConnection(), 70, "Consulta de log de operações");
+            DocumentoUtils.gravaLog(this.getConnection(), 70, "Consulta da lista de log de operações");
             return this.dao.getLogOperacoes(codigoDeUsuario, tipoOperacao, dataInicio, dataFim, codigoOperacao).stream().map(LogOperacoesDto::new).toList();
         } catch (NullPointerException e) {
             throw new NullPointerException("Erro ao consultar o log de operações: " + e.getMessage());

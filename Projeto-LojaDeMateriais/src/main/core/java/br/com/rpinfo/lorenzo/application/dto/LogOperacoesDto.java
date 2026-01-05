@@ -23,6 +23,7 @@ public class LogOperacoesDto extends BaseDto {
     @Length(max=255)
     @Schema(description = "Descrição da operação", example = "Adicionado um novo usuário ao sistema")
     private String descricao;
+    private String agrupamento;
 
     public LogOperacoesDto(){super();}
 
@@ -32,6 +33,7 @@ public class LogOperacoesDto extends BaseDto {
         this.hora = logOperacoes.getHora().getValue();
         this.codigoUsuario = logOperacoes.getUsua_codigo().getValue();
         this.descricao = logOperacoes.getDescricao().getValue();
+        this.agrupamento = logOperacoes.getAgrupamento().getValue();
     }
 
     public LogOperacoes toEntity(){
@@ -41,6 +43,7 @@ public class LogOperacoesDto extends BaseDto {
         logOperacoes.getHora().setValue(this.getHora());
         logOperacoes.getUsua_codigo().setValue(this.getCodigoUsuario());
         logOperacoes.getDescricao().setValue(this.getDescricao());
+        logOperacoes.getAgrupamento().setValue(this.getAgrupamento());
         return logOperacoes;
     }
 }

@@ -21,6 +21,7 @@ public class LogOperacoes extends EntityClass implements Serializable {
     private Descricao hora = new Descricao(true);
     private Numerico usua_codigo = new Numerico(true);
     private Descricao descricao = new Descricao(true);
+    private Descricao agrupamento = new Descricao(true);
 
     public LogOperacoes() {
         super();
@@ -37,6 +38,7 @@ public class LogOperacoes extends EntityClass implements Serializable {
         logDto.setHora(this.getHora().getValue());
         logDto.setCodigoUsuario(this.getUsua_codigo().getValue());
         logDto.setDescricao(this.getDescricao().getValue());
+        logDto.setAgrupamento(this.getAgrupamento().getValue());
         return logDto;
     }
 }

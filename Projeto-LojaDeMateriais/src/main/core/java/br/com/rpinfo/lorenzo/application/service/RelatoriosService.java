@@ -35,7 +35,7 @@ public class RelatoriosService extends ServiceBase {
                 listMvpc.forEach(mvpc -> {
                     mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
                 });
-                DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entradas nas movimentações");
+                DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de todas as entradas nas movimentações");
                 return listMvpc.stream().map(MovProdutosCabDto::new).toList();
             }
             return null;
@@ -53,7 +53,7 @@ public class RelatoriosService extends ServiceBase {
                 listMvpc.forEach(mvpc -> {
                     mvpc.setItens(listMvpd.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
                 });
-                DocumentoUtils.gravaLog(this.getConnection(), 72, "Consulta de saídas nas movimentações");
+                DocumentoUtils.gravaLog(this.getConnection(), 72, "Consulta de todas as saídas nas movimentações");
                 return listMvpc.stream().map(MovProdutosCabDto::new).toList();
             }
             return null;
@@ -85,7 +85,7 @@ public class RelatoriosService extends ServiceBase {
 
         try {
             if (!vendedores.isEmpty()) {
-                DocumentoUtils.gravaLog(this.getConnection(), 74, "Consulta de comissões dos vendedores");
+                DocumentoUtils.gravaLog(this.getConnection(), 74, "Consulta de comissões de cada vendedor");
                 return vendedores.stream().map(VendedoresDto::new).toList();
             }
             return null;
@@ -101,7 +101,7 @@ public class RelatoriosService extends ServiceBase {
         try {
             if (mvpc != null) {
                 mvpc.setItens(mvpdList.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
-                DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entrada na movimentação");
+                DocumentoUtils.gravaLog(this.getConnection(), 71, "Consulta de entrada em movimentação específica por transação");
                 return mvpc.toDto();
             }
             return null;

@@ -6,12 +6,10 @@ import main.core.java.br.com.rpinfo.lorenzo.application.dto.ProdutosDto;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.NullPointerException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.exceptions.ValidationException;
 import main.core.java.br.com.rpinfo.lorenzo.domain.model.entity.Produtos;
-import main.core.java.br.com.rpinfo.lorenzo.domain.model.field.Data;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDao;
 import main.core.java.br.com.rpinfo.lorenzo.domain.repositories.produtos.ProdutoDaoImp;
 import main.core.java.br.com.rpinfo.lorenzo.shared.DocumentoUtils;
 
-import java.util.Date;
 import java.util.List;
 
 public class ProdutosService extends ServiceBase {
@@ -37,7 +35,7 @@ public class ProdutosService extends ServiceBase {
                 //produto.getDtultvenda().setValue(data.getValue());
 
                 if (this.dao.insertProduto(produto)) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 40, "Gravação de produto");
+                    DocumentoUtils.gravaLog(this.getConnection(), 40, "Gravação de um novo produto no banco de dados");
                     return true;
                 }
             }
@@ -52,7 +50,7 @@ public class ProdutosService extends ServiceBase {
 
         try {
             if (!produtos.isEmpty()) {
-                DocumentoUtils.gravaLog(this.getConnection(), 42, "Consulta de produtos");
+                DocumentoUtils.gravaLog(this.getConnection(), 42, "Consulta da lista de todos os produtos gravados no banco de dados");
                 return produtos.stream().map(ProdutosDto::new).toList();
             }
             return null;
@@ -66,7 +64,7 @@ public class ProdutosService extends ServiceBase {
 
         try {
             if (produto != null) {
-                DocumentoUtils.gravaLog(this.getConnection(), 42, "Consulta de produto");
+                DocumentoUtils.gravaLog(this.getConnection(), 42, "Consulta de um produto específico por ID");
                 return produto.toDto();
             }
             return null;
@@ -103,7 +101,7 @@ public class ProdutosService extends ServiceBase {
                     prod.getEstoque().setValue(prodDto.getEstoque());
                 }
                 if (this.dao.update(prod)) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 41, "Edição de dados de produto");
+                    DocumentoUtils.gravaLog(this.getConnection(), 41, "Edição de dados de um produto específico");
                     return true;
                 }
             }

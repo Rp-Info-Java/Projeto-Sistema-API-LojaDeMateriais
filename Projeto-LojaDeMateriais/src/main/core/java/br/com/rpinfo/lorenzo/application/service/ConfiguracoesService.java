@@ -29,7 +29,7 @@ public class ConfiguracoesService extends ServiceBase {
             Configuracoes config = configDto.toEntity();
             if (DocumentoUtils.validarCamposConfig(config.getValidasaidas().getValue()) && DocumentoUtils.validarCamposConfig(config.getValidafornec().getValue()) && DocumentoUtils.validarCamposConfig(config.getValidacliente().getValue())) {
                 if (this.dao.insertConfiguracao(config)) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 10, "Gravação de configuração");
+                    DocumentoUtils.gravaLog(this.getConnection(), 10, "Gravação de uma nova configuração no banco de dados");
                     return true;
                 }
             }
@@ -45,6 +45,7 @@ public class ConfiguracoesService extends ServiceBase {
         List<Configuracoes> listConfiguracoes = this.dao.getListConfiguracoes();
 
         if (!listConfiguracoes.isEmpty()) {
+            DocumentoUtils.gravaLog(this.getConnection(), 12, "Consulta da lista de configurações disponíveis");
             return listConfiguracoes.stream().map(ConfiguracoesDto::new).toList();
         }
         return null;
@@ -54,6 +55,7 @@ public class ConfiguracoesService extends ServiceBase {
         Configuracoes config = this.dao.getConfiguracao(id);
         try {
             if (config != null) {
+                DocumentoUtils.gravaLog(this.getConnection(), 12, "Consulta de uma configuração específica por ID");
                 return config.toDto();
             }
             return null;
@@ -88,7 +90,7 @@ public class ConfiguracoesService extends ServiceBase {
                     config.getPercdescontos().setValue(configDto.getPercentualDescontos());
                 }
                 if (this.dao.updateConfiguracoes(config)) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 11, "Edição de configuração");
+                    DocumentoUtils.gravaLog(this.getConnection(), 11, "Edição de campo(s) em uma configuração específica");
                     return true;
                 }
             }

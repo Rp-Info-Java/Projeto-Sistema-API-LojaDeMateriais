@@ -29,7 +29,7 @@ public class VendedoresService extends ServiceBase {
             Vendedores vendedor = vendedorDto.toEntity();
             if (vendedor.getNome().getValue() != null) {
                 if (this.dao.insert(vendedor)) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 90, "Gravação de vendedor");
+                    DocumentoUtils.gravaLog(this.getConnection(), 90, "Gravação de um novo Vendedor no banco de dados");
                     return true;
                 }
             }
@@ -43,7 +43,7 @@ public class VendedoresService extends ServiceBase {
         List<Vendedores> vend = this.dao.getListVendedores();
 
         if (!vend.isEmpty()) {
-            DocumentoUtils.gravaLog(this.getConnection(), 92, "Consulta de vendedores");
+            DocumentoUtils.gravaLog(this.getConnection(), 92, "Consulta da lista de todos os vendedores gravados no banco de dados");
             return vend.stream().map(VendedoresDto::new).toList();
         }
         return null;
@@ -54,7 +54,7 @@ public class VendedoresService extends ServiceBase {
 
         try {
             if (vendedor != null) {
-                DocumentoUtils.gravaLog(this.getConnection(), 92, "Consulta de vendedor");
+                DocumentoUtils.gravaLog(this.getConnection(), 92, "Consulta de um vendedor específico por ID");
                 return vendedor.toDto();
             }
             return null;
@@ -74,7 +74,7 @@ public class VendedoresService extends ServiceBase {
                     vendedor.getComissao().setValue(vendedorDto.getComissao());
                 }
                 if (this.dao.update(vendedor)) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 91, "Edição de dados de vendedor");
+                    DocumentoUtils.gravaLog(this.getConnection(), 91, "Edição de dados de um vendedor específico");
                     return true;
                 }
             }

@@ -84,7 +84,7 @@ public class MovProdutoService extends ServiceBase {
                 mvpc = this.validarConfiguracao(mvpc, config);
 
                 if (this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue())) {
-                    DocumentoUtils.gravaLog(this.getConnection(), 50, "Gravação de movimentação");
+                    DocumentoUtils.gravaLog(this.getConnection(), 50, "Gravando uma nova entrada nas movimentações");
                     return this.dao.insertEntradas(mvpc);
                 }
             }
@@ -193,7 +193,7 @@ public class MovProdutoService extends ServiceBase {
 
                     mvpc = this.validarConfiguracao(mvpc, config);
 
-                    DocumentoUtils.gravaLog(this.getConnection(), 51, "Edição de movimentação (Saídas)");
+                    DocumentoUtils.gravaLog(this.getConnection(), 51, "Edição dos campos de uma movimentação e atualização para 'saida'");
 
                     this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue());
                     return this.dao.insertSaidas(mvpc, mvpc.getTransacao().getValue());
@@ -244,7 +244,7 @@ public class MovProdutoService extends ServiceBase {
                     });
                 }
 
-                DocumentoUtils.gravaLog(this.getConnection(), 52, "Consulta de movimentações");
+                DocumentoUtils.gravaLog(this.getConnection(), 52, "Consulta da lista de todas as movimentações gravadas");
                 return list.stream().map(MovProdutosCabDto::new).toList();
             }
             return null;
