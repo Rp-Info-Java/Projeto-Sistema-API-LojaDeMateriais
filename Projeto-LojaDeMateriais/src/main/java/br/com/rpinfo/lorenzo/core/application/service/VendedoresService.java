@@ -1,0 +1,86 @@
+package br.com.rpinfo.lorenzo.core.application.service;
+
+import br.framework.interfaces.IConnection;
+import com.google.common.base.Strings;
+import br.com.rpinfo.lorenzo.core.application.dto.VendedoresDto;
+import br.com.rpinfo.lorenzo.core.domain.exceptions.NullPointerException;
+import br.com.rpinfo.lorenzo.core.domain.exceptions.ValidationException;
+import br.com.rpinfo.lorenzo.core.domain.model.entity.Vendedores;
+import br.com.rpinfo.lorenzo.core.domain.repositories.vendedores.VendedoresDao;
+import br.com.rpinfo.lorenzo.core.domain.repositories.vendedores.VendedoresDaoImp;
+import br.com.rpinfo.lorenzo.core.shared.DocumentoUtils;
+
+import java.util.List;
+
+public class VendedoresService extends ServiceBase {
+
+    private VendedoresDao dao;
+
+    public VendedoresService(IConnection connection) {
+        super(connection);
+        this.dao = new VendedoresDaoImp(connection);
+    }
+
+    public boolean adicionarVendedor(VendedoresDto vendedorDto) throws ValidationException {
+        try {
+            if (vendedorDto == null) {
+                throw new Exception("Os dados do vendedor são nulos.");
+            }
+            Vendedores vendedor = vendedorDto.toEntity();
+            if (vendedor.getNome().getValue() != null) {
+                if (this.dao.insert(vendedor)) {
+                    DocumentoUtils.gravaLog(this.getConnection(), 90, "Gravação de um novo Vendedor no banco de dados");
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao adicionar vendedor: " + e.getMessage());
+        }
+    }
+
+    public List<VendedoresDto> getListVendedores() throws Exception {
+        List<Vendedores> vend = this.dao.getListVendedores();
+
+        if (!vend.isEmpty()) {
+            DocumentoUtils.gravaLog(this.getConnection(), 92, "Consulta da lista de todos os vendedores gravados no banco de dados");
+            return vend.stream().map(VendedoresDto::new).toList();
+        }
+        return null;
+    }
+
+    public VendedoresDto getVendedorById(Integer id) throws Exception {
+        Vendedores vendedor = this.dao.getVendedor(id);
+
+        try {
+            if (vendedor != null) {
+                DocumentoUtils.gravaLog(this.getConnection(), 92, "Consulta de um vendedor específico por ID");
+                return vendedor.toDto();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao buscar vendedor pelo ID: " + e.getMessage());
+        }
+    }
+
+    public boolean atualizarVendedor(VendedoresDto vendedorDto) throws Exception {
+        Vendedores vendedor = this.dao.getVendedor(vendedorDto.getCodigo());
+        try {
+            if (vendedor != null) {
+                if (!Strings.isNullOrEmpty(vendedorDto.getNome())) {
+                    vendedor.getNome().setValue(vendedorDto.getNome());
+                }
+                if (vendedorDto.getComissao() != null) {
+                    vendedor.getComissao().setValue(vendedorDto.getComissao());
+                }
+                if (this.dao.update(vendedor)) {
+                    DocumentoUtils.gravaLog(this.getConnection(), 91, "Edição de dados de um vendedor específico");
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao atualizar vendedor: " + e.getMessage());
+        }
+        return false;
+    }
+}
