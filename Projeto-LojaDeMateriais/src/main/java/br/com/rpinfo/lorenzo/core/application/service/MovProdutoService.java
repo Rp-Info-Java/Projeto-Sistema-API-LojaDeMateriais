@@ -19,6 +19,7 @@ import br.com.rpinfo.lorenzo.core.domain.repositories.vendedores.VendedoresDao;
 import br.com.rpinfo.lorenzo.core.domain.repositories.vendedores.VendedoresDaoImp;
 import br.com.rpinfo.lorenzo.core.shared.DocumentoUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,68 @@ public class MovProdutoService extends ServiceBase {
         this.daoVen = new VendedoresDaoImp(connection);
         this.daoProd = new ProdutoDaoImp(connection);
     }
+
+    // ENDPOINT PARA REALIZAR insert de MOVSAIDAS NO DELPHI //
+    public boolean addSaidasDelphi(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
+        Fornecedores forn = this.daoForn.getFornecedor(mvpcDto.getCodigoEntidade());
+        Vendedores vend = this.daoVen.getVendedor(mvpcDto.getCodigoVendedor());
+        try {
+            if (mvpcDto == null) {
+                throw new Exception("Os dados da movimentação são nulos.");
+            }
+
+            MovProdutosC mvpc = mvpcDto.toEntity();
+
+            if (forn != null) {
+                if (DocumentoUtils.validarImpedimento(config, forn.getSituacao().getValue())) {
+                    mvpc.getCodentidade().setValue(forn.getCodigo().getValue());
+                    //mvpc.getTipoentidade().setValue(forn.getTipo().getValue());
+                } else {
+                    return false; //Garante que, caso o fornecedor esteja impedido, a movimentação não seja inserida.
+                }
+                if (vend != null) {
+                    mvpc.getVend_codigo().setValue(vend.getCodigo().getValue());
+                } else {
+                    return false; //Garante que, caso o vendedor seja nulo, a movimentação não seja inserida.
+                }
+
+                List<MovProdutosD> listD = mvpc.getItens();
+                Data data = new Data();
+                Date dateJava = new Date();
+                data.setValue(dateJava);
+                mvpc.getDatamvto().setValue(data.getValue());
+
+                for (int i = 0; i < listD.size(); i++) {
+                    listD.get(i).getStatus().setValue("N");
+                    Produtos prod = this.daoProd.getProduto(listD.get(i).getProd_codigo().getValue());
+                    prod.getDtultcompra().setValue(data.getValue());
+                    if(this.daoProd.update(prod)){
+                        DocumentoUtils.gravaLog(this.getConnection(), 41, "Editando a data de compra do produto");
+                    }
+                }
+
+                mvpc.getTipoentidade().setValue(mvpcDto.getTipoEntidade());
+                mvpc.setItens(listD);
+                mvpc.getStatus().setValue("N");             //N ou C, sempre seta "N"
+                mvpc.getEs().setValue("S");                 //E ou S, sempre seta "S" em addSaidasDelphi
+
+                mvpc = this.validarConfiguracao(mvpc, config);
+
+                if (this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue())) {
+                    DocumentoUtils.gravaLog(this.getConnection(), 50, "Gravando uma nova entrada nas movimentações");
+                    return this.dao.insertEntradas(mvpc);
+                }
+            }
+
+            return false;
+        } catch (ValidationException e) {
+            throw new ValidationException("Erro ao inserir entradas na movimentação: " + e.getMessage());
+        } catch (Exception e){
+            throw new RuntimeException("Erro ao inserir entradas na movimentação: " + e.getMessage());
+        }
+    }
+
+    //------------------------------------------------------//
 
     public boolean adicionarEntradas(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
         Fornecedores forn = this.daoForn.getFornecedor(mvpcDto.getCodigoEntidade());
@@ -311,5 +374,26 @@ public class MovProdutoService extends ServiceBase {
             }
         }
         return mvpc;
+    }
+
+    public List<MovProdutosCabDto> getListAllMov(String condES, String es, LocalDate dataInicial, LocalDate dataFinal, String condStatus) throws Exception {
+        List<MovProdutosC> list = this.dao.getAllMovimentacoes(condES, es, dataInicial, dataFinal, condStatus);
+        List<MovProdutosD> listMovD = this.dao.getListMovimentacoesD();
+
+        try{
+            if (!list.isEmpty()) {
+                if (!listMovD.isEmpty()) {
+                    list.forEach(mvpc -> {
+                        mvpc.setItens(listMovD.stream().filter(mvpd -> mvpd.getTransacao().getValue().equals(mvpc.getTransacao().getValue())).toList());
+                    });
+                }
+
+                DocumentoUtils.gravaLog(this.getConnection(), 52, "Consulta de movimentações pelo Delphi");
+                return list.stream().map(MovProdutosCabDto::new).toList();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao buscar lista com todas as movimentações: " + e.getMessage());
+        }
     }
 }

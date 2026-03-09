@@ -12,9 +12,31 @@ import br.com.rpinfo.lorenzo.core.domain.exceptions.ValidationException;
 import br.com.rpinfo.lorenzo.core.domain.model.enums.MethodVersion;
 import br.com.rpinfo.lorenzo.core.infrastructure.datasource.db.ConnectionManager;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 
 public class MovProdutoUseCase extends MovProdutoService {
     public MovProdutoUseCase(IConnection connection) { super(connection); }
+
+    // Insert para o DELPHI //
+    public static Response insertSaidaDelphi(MovProdutosCabDto mvpcDto, MethodVersion methodVersion) throws ValidationException {
+        IConnection connection = null;
+        MovProdutoService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new MovProdutoService(connection);
+            ConfiguracoesDto configDto = new ConfiguracoesService(connection).getConfiguracaoById(Integer.valueOf(mvpcDto.getNumeroDocumento()));
+            return ResponseHandler.ok(business.addSaidasDelphi(mvpcDto, configDto), methodVersion);
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao inserir entradas na movimentação: " + e.getMessage());
+        } finally{
+            if(connection != null){
+                connection.close();
+            }
+        }
+    }
+    //----------------------//
 
     public static Response insertEntradas(MovProdutosCabDto mvpcDto, MethodVersion methodVersion) throws ValidationException {
         IConnection connection = null;
@@ -91,6 +113,22 @@ public class MovProdutoUseCase extends MovProdutoService {
             return ResponseHandler.ok(business.getMovimentacaoByTransaction(transaction), methodVersion);
         } catch (Exception e) {
             throw new NullPointerException("Erro ao consultar movimentação: " + e.getMessage());
+        } finally{
+            if(connection != null){
+                connection.close();
+            }
+        }
+    }
+
+    public static Response getMovimentacoesComFiltro(String condES, String es, LocalDate dataInicial, LocalDate dataFinal, String condStatus, MethodVersion methodVersion) throws NullPointerException {
+        IConnection connection = null;
+        MovProdutoService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new MovProdutoService(connection);
+            return ResponseHandler.ok(business.getListAllMov(condES, es, dataInicial, dataFinal, condStatus), methodVersion);
+        } catch (Exception e) {
+            throw new NullPointerException("Erro ao buscar movimentações: " + e.getMessage());
         } finally{
             if(connection != null){
                 connection.close();

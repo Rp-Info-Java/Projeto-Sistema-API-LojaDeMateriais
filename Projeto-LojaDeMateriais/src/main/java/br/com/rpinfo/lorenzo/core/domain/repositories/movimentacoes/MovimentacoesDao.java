@@ -4,6 +4,8 @@ import br.com.rpinfo.lorenzo.core.domain.model.entity.MovProdutosC;
 import br.com.rpinfo.lorenzo.core.domain.model.entity.MovProdutosD;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -22,4 +24,6 @@ public interface MovimentacoesDao {
     List<MovProdutosC> getListMovimentacoesC () throws Exception;
 
     List<MovProdutosD> getListMovimentacoesD() throws Exception;
+
+    List<MovProdutosC> getAllMovimentacoes(String condES, String es, LocalDate dataInicial, LocalDate dataFinal, String condStatus) throws Exception;
 }

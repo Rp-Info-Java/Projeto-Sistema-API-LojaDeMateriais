@@ -1,5 +1,7 @@
 package br.com.rpinfo.lorenzo.core.domain.repositories.movimentacoes;
 
+import br.com.rpinfo.lorenzo.core.domain.model.entity.Cliente;
+import br.com.rpinfo.lorenzo.core.domain.model.entity.Fornecedores;
 import br.framework.classes.DataBase.QueryBuilder;
 import br.framework.classes.DataBase.Repository;
 import br.framework.classes.DataBase.Transaction;
@@ -11,6 +13,7 @@ import br.framework.interfaces.IConnection;
 import br.com.rpinfo.lorenzo.core.domain.model.entity.MovProdutosD;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao {
@@ -173,6 +176,39 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
             return this.getManager().queryFactory(sql.build(), MovProdutosD.class);
         } catch (Exception e) {
             throw new RuntimeException("Erro buscando o detalhamento da lista de movimentações: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<MovProdutosC> getAllMovimentacoes(String condES, String es, LocalDate dataInicial, LocalDate dataFinal, String condStatus) {
+        try {
+            if ("E".equals(es)){
+                QueryBuilder sqlEntrada = QueryBuilder.create(this.getConnection())
+                        .select("*")
+                        .from(MovProdutosC.class)
+                        .innerJoin(Cliente.class, " (clie_codigo = mvpc_codentidade) ")
+                        .innerJoin(Fornecedores.class, " (forn_codigo = mvpc_codentidade) ")
+                        .where("mvpc_datamvto BETWEEN '" + dataInicial + "' AND '" + dataFinal + "'")
+                        .and("mvpc_status", "=", condStatus)
+                        .and("mvpc_es", "=", condES)
+                        .orderBy("mvpc_transacao");
+
+                return this.getManager().queryFactory(sqlEntrada.build(), MovProdutosC.class);
+            } else if ("S".equals(es)){
+                QueryBuilder sqlSaida = QueryBuilder.create(this.getConnection())
+                        .select("*")
+                        .from(MovProdutosC.class)
+                        .innerJoin(Cliente.class, " (clie_codigo = mvpc_codentidade) ")
+                        .where("mvpc_datamvto BETWEEN '" + dataInicial + "' AND '" + dataFinal + "'")
+                        .and("mvpc_status", "=", condStatus)
+                        .and("mvpc_es", "=", condES)
+                        .orderBy("mvpc_transacao");
+
+                return this.getManager().queryFactory(sqlSaida.build(), MovProdutosC.class);
+            }
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro tentando executar a query de consulta de movimentações: " + e.getMessage());
         }
     }
 }

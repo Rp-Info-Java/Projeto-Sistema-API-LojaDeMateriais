@@ -12,9 +12,34 @@ import br.com.rpinfo.lorenzo.core.domain.exceptions.ValidationException;
 import br.com.rpinfo.lorenzo.core.domain.model.enums.MethodVersion;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
+
 @RestController
 @Tag(name = "Movimentações", description = "Operações relacionadas a movimentações")
 public class MovProdutosController {
+    @PostMapping("/{version}/movimentacoes/insertSaidaDelphi")
+    public Response insrtSaidaDelphi(@PathVariable String version, @RequestBody MovProdutosCabDto mvpcDto) throws ValidationException {
+        return MovProdutoUseCase.insertSaidaDelphi(mvpcDto, MethodVersion.fromValue(version));
+    }
+
+    @GetMapping("/{version}/{condES}/{es}/{dtinicial}/{dtfinal}/{condStatus}/movimentacoes/getMovFiltered")
+    public Response getListMovimentacoesFiltro(
+            @PathVariable String condES,
+            @PathVariable String es,
+            @PathVariable
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate dtinicial,
+            @PathVariable
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate dtfinal,
+            @PathVariable String condStatus,
+            @PathVariable String version
+    ) throws NullPointerException {
+        return MovProdutoUseCase.getMovimentacoesComFiltro(condES, es, dtinicial, dtfinal, condStatus, MethodVersion.fromValue(version));
+    }
+
     @PostMapping("/{version}/movimentacoes/insertEntrada")
     @Operation(
             summary = "Cadastrar movimentação de entrada",
