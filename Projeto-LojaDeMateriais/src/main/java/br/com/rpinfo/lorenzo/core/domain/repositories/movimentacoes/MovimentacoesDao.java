@@ -10,8 +10,9 @@ import java.util.List;
 
 @Repository
 public interface MovimentacoesDao {
+    String insertEntradaRetornaTransacao (MovProdutosC mvpc) throws Exception;
 
-    boolean insertEntradas (MovProdutosC mvpc) throws Exception;
+    Boolean insertEntradas (MovProdutosC mvpc) throws Exception;
 
     boolean insertSaidas (MovProdutosC mvpc, String transacao) throws Exception;
 

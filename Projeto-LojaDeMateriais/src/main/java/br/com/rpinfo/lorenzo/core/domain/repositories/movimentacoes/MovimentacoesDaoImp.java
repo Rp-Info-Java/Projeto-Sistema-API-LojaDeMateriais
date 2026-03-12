@@ -74,7 +74,7 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
     }
 
     @Override
-    public boolean insertEntradas(MovProdutosC mvpc) throws Exception {
+    public Boolean insertEntradas(MovProdutosC mvpc) throws Exception {
         String transacao = this.getNextTransaction();
 
         mvpc.getTransacao().setValue(transacao);
@@ -99,6 +99,34 @@ public class MovimentacoesDaoImp extends Repository implements MovimentacoesDao 
             }
         }
         return false;
+    }
+
+    @Override
+    public String insertEntradaRetornaTransacao (MovProdutosC mvpc) throws Exception {
+        String transacao = this.getNextTransaction();
+
+        mvpc.getTransacao().setValue(transacao);
+        mvpc.getItens().forEach(item -> item.getTransacao().setValue(transacao));
+        mvpc.toInsert();
+        Transaction transaction = null;
+        try {
+            transaction = this.getConnection().getTransaction();
+            transaction.addEntity(mvpc);
+            transaction.addEntities((List<IEntityClass>) (List<?>) mvpc.getItens());
+            if (transaction.commit()) {
+                return transacao;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        }
+        return null;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class MovProdutoService extends ServiceBase {
     }
 
     // ENDPOINT PARA REALIZAR insert de MOVSAIDAS NO DELPHI //
-    public boolean addSaidasDelphi(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
+    public String addSaidasDelphi(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
         Fornecedores forn = this.daoForn.getFornecedor(mvpcDto.getCodigoEntidade());
         Vendedores vend = this.daoVen.getVendedor(mvpcDto.getCodigoVendedor());
         try {
@@ -56,12 +56,12 @@ public class MovProdutoService extends ServiceBase {
                     mvpc.getCodentidade().setValue(forn.getCodigo().getValue());
                     //mvpc.getTipoentidade().setValue(forn.getTipo().getValue());
                 } else {
-                    return false; //Garante que, caso o fornecedor esteja impedido, a movimentação não seja inserida.
+                    return null; //Garante que, caso o fornecedor esteja impedido, a movimentação não seja inserida.
                 }
                 if (vend != null) {
                     mvpc.getVend_codigo().setValue(vend.getCodigo().getValue());
                 } else {
-                    return false; //Garante que, caso o vendedor seja nulo, a movimentação não seja inserida.
+                    return null; //Garante que, caso o vendedor seja nulo, a movimentação não seja inserida.
                 }
 
                 List<MovProdutosD> listD = mvpc.getItens();
@@ -88,11 +88,11 @@ public class MovProdutoService extends ServiceBase {
 
                 if (this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue())) {
                     DocumentoUtils.gravaLog(this.getConnection(), 50, "Gravando uma nova entrada nas movimentações");
-                    return this.dao.insertEntradas(mvpc);
+                    return this.dao.insertEntradaRetornaTransacao(mvpc);
                 }
             }
 
-            return false;
+            return null;
         } catch (ValidationException e) {
             throw new ValidationException("Erro ao inserir entradas na movimentação: " + e.getMessage());
         } catch (Exception e){
@@ -102,7 +102,7 @@ public class MovProdutoService extends ServiceBase {
 
     //------------------------------------------------------//
 
-    public boolean adicionarEntradas(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
+    public String adicionarEntradas(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
         Fornecedores forn = this.daoForn.getFornecedor(mvpcDto.getCodigoEntidade());
         Vendedores vend = this.daoVen.getVendedor(mvpcDto.getCodigoVendedor());
         try {
@@ -117,12 +117,12 @@ public class MovProdutoService extends ServiceBase {
                     mvpc.getCodentidade().setValue(forn.getCodigo().getValue());
                     mvpc.getTipoentidade().setValue(forn.getTipo().getValue());
                 } else {
-                    return false; //Garante que, caso o fornecedor esteja impedido, a movimentação não seja inserida.
+                    return null; //Garante que, caso o fornecedor esteja impedido, a movimentação não seja inserida.
                 }
                 if (vend != null) {
                     mvpc.getVend_codigo().setValue(vend.getCodigo().getValue());
                 } else {
-                    return false; //Garante que, caso o vendedor seja nulo, a movimentação não seja inserida.
+                    return null; //Garante que, caso o vendedor seja nulo, a movimentação não seja inserida.
                 }
 
                 List<MovProdutosD> listD = mvpc.getItens();
@@ -148,11 +148,11 @@ public class MovProdutoService extends ServiceBase {
 
                 if (this.atualizarEstoque(mvpc.getItens(), mvpc.getEs().getValue())) {
                     DocumentoUtils.gravaLog(this.getConnection(), 50, "Gravando uma nova entrada nas movimentações");
-                    return this.dao.insertEntradas(mvpc);
+                    return this.dao.insertEntradaRetornaTransacao(mvpc);
                 }
             }
 
-            return false;
+            return null;
         } catch (ValidationException e) {
             throw new ValidationException("Erro ao inserir entradas na movimentação: " + e.getMessage());
         } catch (Exception e){
