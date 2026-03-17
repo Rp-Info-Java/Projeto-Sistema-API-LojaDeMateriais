@@ -1,6 +1,8 @@
 package br.com.rpinfo.lorenzo.core.application.dto;
 
 import br.framework.classes.dto.annotations.Length;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +20,11 @@ public class MovProdutosCabDto extends BaseDto {
     @Length(max = 10)
     @Schema(description = "Número do documento", example = "123456789")
     private String numeroDocumento;
+
     @Length(max = 8)
     @Schema(description = "Data do movimento", example = "2022-01-01")
+    @JsonProperty("dataMvto")
+    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date dataMovimento;
     @Length(max = 1)
     @Schema(description = "Status da movimentação (N ou C)", example = "N")
@@ -32,6 +37,7 @@ public class MovProdutosCabDto extends BaseDto {
     private String tipoEntidade;
     @Schema(description = "Código da entidade", example = "1")
     private Integer codigoEntidade;
+    private String nomeEntidade;
     @Schema(description = "Código de vendedor", example = "1")
     private Integer codigoVendedor;
     @Schema(description = "Valor total de Produtos", example = "1000")

@@ -73,7 +73,7 @@ public class MovProdutoService extends ServiceBase {
                 for (int i = 0; i < listD.size(); i++) {
                     listD.get(i).getStatus().setValue("N");
                     Produtos prod = this.daoProd.getProduto(listD.get(i).getProd_codigo().getValue());
-                    prod.getDtultcompra().setValue(data.getValue());
+                    prod.getDtultvenda().setValue(data.getValue());
                     if(this.daoProd.update(prod)){
                         DocumentoUtils.gravaLog(this.getConnection(), 41, "Editando a data de compra do produto");
                     }

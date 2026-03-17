@@ -1,7 +1,6 @@
 package br.com.rpinfo.lorenzo.core.application.service;
 
 import br.com.rpinfo.lorenzo.core.application.dto.PagamentoDto;
-import br.com.rpinfo.lorenzo.core.application.dto.PendFinDto;
 import br.com.rpinfo.lorenzo.core.domain.exceptions.ValidationException;
 import br.com.rpinfo.lorenzo.core.domain.model.entity.Pagamento;
 import br.com.rpinfo.lorenzo.core.domain.model.entity.PendFin;
