@@ -52,6 +52,7 @@ public class MovProdutosCabDto extends BaseDto {
     private Double totalDocumento;
     @Schema(description = "Lista de produtos da movimentação")
     private List<MovProdutosDetDto> itens;
+    private String nomeVendedor;
 
     public MovProdutosCabDto(){
         super();

@@ -56,4 +56,79 @@ public class RelatoriosDelphiUseCase extends RelatoriosDelphiService {
             }
         }
     }
+    public static Response getMovimentacoesGeralVendedores(String dataIni, String dataFim, MethodVersion methodVersion) throws ValidationException {
+        IConnection connection = null;
+        RelatoriosDelphiService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new RelatoriosDelphiService(connection);
+            return ResponseHandler.ok(business.getGeralVendedores(dataIni, dataFim), methodVersion);
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao buscar relatório geral de vendedores: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+    public static Response getPendenciasFinanceiras(String dataIni, String dataFim, String status, String pagarReceber, String tipoEnt, Integer codEnt, String pendente, MethodVersion methodVersion) throws ValidationException {
+        IConnection connection = null;
+        RelatoriosDelphiService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new RelatoriosDelphiService(connection);
+            return ResponseHandler.ok(business.getRelatorioPendFin(dataIni, dataFim, status, pagarReceber, tipoEnt, codEnt, pendente), methodVersion);
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao buscar relatório de pendências financeiras: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+    public static Response getProdutosVendidos(String dataIni, String dataFim, MethodVersion methodVersion) throws ValidationException {
+        IConnection connection = null;
+        RelatoriosDelphiService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new RelatoriosDelphiService(connection);
+            return ResponseHandler.ok(business.getRelatorioProdVend(dataIni, dataFim), methodVersion);
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao buscar relatório de produtos vendidos: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+    public static Response getMovTransacao(String transacao, MethodVersion methodVersion) throws ValidationException {
+        IConnection connection = null;
+        RelatoriosDelphiService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new RelatoriosDelphiService(connection);
+            return ResponseHandler.ok(business.getRelatorioTransacao(transacao), methodVersion);
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao buscar relatório de transação: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+    public static Response getRelUnitVend(Integer codVendedor, MethodVersion methodVersion) throws ValidationException {
+        IConnection connection = null;
+        RelatoriosDelphiService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new RelatoriosDelphiService(connection);
+            return ResponseHandler.ok(business.getRelatorioUnitarioVendedores(codVendedor), methodVersion);
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao buscar relatório unitário de vendedores: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
 }

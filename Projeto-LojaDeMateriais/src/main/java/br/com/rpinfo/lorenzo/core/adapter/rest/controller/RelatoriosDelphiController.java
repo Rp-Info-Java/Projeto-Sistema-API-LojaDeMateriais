@@ -27,4 +27,29 @@ public class RelatoriosDelphiController {
     public Response getCanceladas(@RequestParam(required = false) String dataInicio, @RequestParam(required = false) String dataFim, @PathVariable String version) throws ValidationException {
         return RelatoriosDelphiUseCase.getMovimentacoesCanceladas(dataInicio, dataFim, MethodVersion.fromValue(version));
     }
+
+    @GetMapping("/{version}/relatoriosdelphi/geralvendedores")
+    public Response getGeralVendedores(@RequestParam(required = false) String dataInicio, @RequestParam(required = false) String dataFim, @PathVariable String version) throws ValidationException {
+        return RelatoriosDelphiUseCase.getMovimentacoesGeralVendedores(dataInicio, dataFim, MethodVersion.fromValue(version));
+    }
+
+    @GetMapping("/{version}/relatoriosdelphi/relpendfin")
+    public Response getRelPendFin(@RequestParam(required = false) String dataInicio, @RequestParam(required = false) String dataFim, @RequestParam(required = false) String status, @RequestParam(required = false) String pagarReceber, @RequestParam(required = false) String tipoEnt, @RequestParam(required = false) Integer codEnt, @RequestParam(required = false) String pendente, @PathVariable String version) throws ValidationException {
+        return RelatoriosDelphiUseCase.getPendenciasFinanceiras(dataInicio, dataFim, status, pagarReceber, tipoEnt, codEnt, pendente, MethodVersion.fromValue(version));
+    }
+
+    @GetMapping("/{version}/relatoriosdelphi/relprodvend")
+    public Response getRelProdVend(@RequestParam(required = false) String dataInicio, @RequestParam(required = false) String dataFim, @PathVariable String version) throws ValidationException {
+        return RelatoriosDelphiUseCase.getProdutosVendidos(dataInicio, dataFim, MethodVersion.fromValue(version));
+    }
+
+    @GetMapping("/{version}/relatoriosdelphi/reltransacao")
+    public Response getRelTransacao(@RequestParam(required = false) String transacao, @PathVariable String version) throws ValidationException {
+        return RelatoriosDelphiUseCase.getMovTransacao(transacao, MethodVersion.fromValue(version));
+    }
+
+    @GetMapping("/{version}/relatoriosdelphi/relunitvendedor")
+    public Response getRelUniVendedor(@RequestParam(required = false) Integer codVendedor, @PathVariable String version) throws ValidationException {
+        return RelatoriosDelphiUseCase.getRelUnitVend(codVendedor, MethodVersion.fromValue(version));
+    }
 }

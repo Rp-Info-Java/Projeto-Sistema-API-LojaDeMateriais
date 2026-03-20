@@ -2,6 +2,8 @@ package br.com.rpinfo.lorenzo.core.domain.model.entity;
 
 import br.framework.annotations.TableAnnotation;
 import br.framework.classes.DataBase.EntityClass;
+import br.framework.classes.helpers.StringList;
+import br.framework.classes.helpers.Types;
 import lombok.Getter;
 import lombok.Setter;
 import br.com.rpinfo.lorenzo.core.application.dto.MovProdutosCabDto;
@@ -33,10 +35,15 @@ public class MovProdutosC extends EntityClass implements Serializable {
     private Decimal totaloutros = new Decimal(true);
     private Decimal totaldcto = new Decimal(true);
     private List<MovProdutosD> itens = new ArrayList<>();
+    private Cliente cliente = new Cliente();
+    private Fornecedores fornecedores = new Fornecedores();
+    private Vendedores vendedores = new Vendedores();
 
-    public MovProdutosC(){ super(); }
+    public MovProdutosC(){ this(false); }
 
-    public MovProdutosC(Boolean autoEnableFields) { super(); }
+    public MovProdutosC(String condition, Boolean autoEnableFields){ super(condition); }
+
+    public MovProdutosC(Boolean autoEnableFields) { super(); setupFields(); }
 
     public MovProdutosCabDto toDto(){
         MovProdutosCabDto dto = new MovProdutosCabDto();
@@ -55,5 +62,17 @@ public class MovProdutosC extends EntityClass implements Serializable {
         dto.setTotalDocumento(this.getTotaldcto().getValue());
         dto.setItens(this.getItens().stream().map(MovProdutosD::toDto).toList());
         return dto;
+    }
+
+    @Override
+    public void setupFields(){
+        StringList join = new StringList();
+        join.add("mvpc_codentidade = clie_codigo");
+        this.codentidade.addRelationEntity(this.cliente, join, Types.JoinType.InnerJoin);
+
+        join = new StringList();
+        join.add("mvpc_codentidade = forn_codigo");
+        this.codentidade.addRelationEntity(this.fornecedores, join, Types.JoinType.InnerJoin);
+
     }
 }
