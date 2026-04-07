@@ -11,7 +11,7 @@ import br.framework.interfaces.IConnection;
 public class FormasPagamentoUseCase extends FormasPagamentoService {
     public FormasPagamentoUseCase(IConnection connection) { super(connection); }
 
-    public static Response getFpgtoById(String id, MethodVersion methodVersion) throws NullPointerException {
+    public static Response getFpgtoById(Integer id, MethodVersion methodVersion) throws NullPointerException {
         IConnection connection = null;
         FormasPagamentoService business;
         try {

@@ -24,6 +24,8 @@ public class PendFinDto extends BaseDto {
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date datavcto;
     private String origem;
+    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
+    private Date databaixa;
 
     public PendFinDto(){ super(); }
 
@@ -38,6 +40,7 @@ public class PendFinDto extends BaseDto {
         this.parcela = pfin.getParcela().getValue();
         this.datavcto = pfin.getDatavcto().getValue();
         this.origem = pfin.getOrigem().getValue();
+        this.databaixa = pfin.getDatabaixa().getValue();
     }
 
     public PendFin toEntity(){
@@ -52,6 +55,7 @@ public class PendFinDto extends BaseDto {
         pfin.getParcela().setValue(this.getParcela());
         pfin.getDatavcto().setValue(this.getDatavcto());
         pfin.getOrigem().setValue(this.getOrigem());
+        pfin.getDatabaixa().setValue(this.getDatabaixa());
         return pfin;
     }
 }

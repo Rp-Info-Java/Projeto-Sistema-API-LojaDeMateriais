@@ -1,6 +1,7 @@
 package br.com.rpinfo.lorenzo.core.application.dto;
 
 import br.com.rpinfo.lorenzo.core.adapter.rest.response.BaseDto;
+import br.com.rpinfo.lorenzo.core.domain.model.entity.ProdutosMovimentacoes;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,7 @@ public class RelatoriosDelphiDto extends BaseDto {
     private List<ProdVendDto> relatorioMovimentacoesProdVend;
     private List<MovProdutosCabDto> relatorioMovimentacoesTransacao;
     private List<MovProdutosCabDto> relatorioMovimentacoesUnitVendedores;
+    private List<ProdutosMovimentacoesDto> relatorioMovimentacoesProdutos;
 
     public RelatoriosDelphiDto() {
         super();

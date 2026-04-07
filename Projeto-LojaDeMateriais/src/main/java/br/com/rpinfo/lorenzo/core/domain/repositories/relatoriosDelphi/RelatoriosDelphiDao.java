@@ -16,6 +16,7 @@ public interface RelatoriosDelphiDao {
     List<ProdVend> getRelProdVend(Date dataInicial, Date dataFinal) throws Exception;
     MovProdutosC getRelTransacao(String transacao) throws Exception;
     MovProdutosC getRelUnitVendedores(Integer codVendedor) throws Exception;
-
+    List<ProdutosMovimentacoes> getRelProdComprados(Date dataInicial, Date dataFinal) throws Exception;
+    List<PendFin> getRelDocBx(Date dataInicial, Date dataFinal) throws Exception;
     //List<Vendedores> getVendedoresMovimentacoes(String transacao) throws Exception;
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Formaspagamento", description = "Operações relacionadas às formas de pagamento")
 public class FormasPagamentoController {
     @GetMapping("/{version}/{codigo}/formaspagamento/getFpgto")
-    public Response getFpgto(@PathVariable String version, @PathVariable String codigo) throws NullPointerException {
+    public Response getFpgto(@PathVariable String version, @PathVariable Integer codigo) throws NullPointerException {
         return FormasPagamentoUseCase.getFpgtoById(codigo, MethodVersion.fromValue(version));
     }
 }

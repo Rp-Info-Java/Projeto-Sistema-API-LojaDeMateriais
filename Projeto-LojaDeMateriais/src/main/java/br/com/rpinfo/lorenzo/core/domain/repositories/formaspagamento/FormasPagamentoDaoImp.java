@@ -15,7 +15,7 @@ public class FormasPagamentoDaoImp extends Repository implements FormasPagamento
     }
 
     @Override
-    public FormasPagamento getFormasPagamento(String codigo) throws Exception {
+    public FormasPagamento getFormasPagamento(Integer codigo) throws Exception {
         QueryBuilder sql = QueryBuilder.create(this.getConnection())
                 .select("*")
                 .from(FormasPagamento.class)

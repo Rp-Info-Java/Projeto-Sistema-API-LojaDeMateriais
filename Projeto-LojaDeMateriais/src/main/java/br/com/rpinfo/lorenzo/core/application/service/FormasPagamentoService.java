@@ -16,7 +16,7 @@ public class FormasPagamentoService extends ServiceBase{
         this.dao = new FormasPagamentoDaoImp(connection);
     }
 
-    public FormasPagamentoDto getFormasPagamentoById(String id) throws Exception {
+    public FormasPagamentoDto getFormasPagamentoById(Integer id) throws Exception {
         FormasPagamento fpgt = this.dao.getFormasPagamento(id);
 
         try {

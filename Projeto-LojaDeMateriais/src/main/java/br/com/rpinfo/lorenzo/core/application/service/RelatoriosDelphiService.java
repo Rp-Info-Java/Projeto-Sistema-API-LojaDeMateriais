@@ -28,6 +28,10 @@ public class RelatoriosDelphiService extends ServiceBase {
             Date dataFinal = DocumentoUtils.parseData(dataFim);
             FornecedoresService fornecedoresService = new FornecedoresService(this.getConnection());
 
+            if (dataInicio.after(dataFinal)) {
+                throw new Exception("Data inicial não pode ser maior que a data final.");
+            }
+
             List<MovProdutosC> listMvpc = this.dao.getEntradas(dataInicio, dataFinal);
 
             if (!listMvpc.isEmpty()) {
@@ -50,6 +54,10 @@ public class RelatoriosDelphiService extends ServiceBase {
             Date dataInicio = DocumentoUtils.parseData(dataIni);
             Date dataFinal = DocumentoUtils.parseData(dataFim);
             ClienteService clienteService = new ClienteService(this.getConnection());
+
+            if (dataInicio.after(dataFinal)) {
+                throw new Exception("Data inicial não pode ser maior que a data final.");
+            }
 
             List<MovProdutosC> listMvpc = this.dao.getSaidas(dataInicio, dataFinal);
 
@@ -75,6 +83,10 @@ public class RelatoriosDelphiService extends ServiceBase {
             FornecedoresService fornecedoresService = new FornecedoresService(this.getConnection());
             ClienteService clienteService = new ClienteService(this.getConnection());
 
+            if (dataInicio.after(dataFinal)) {
+                throw new Exception("Data inicial não pode ser maior que a data final.");
+            }
+
             List<MovProdutosC> listMvpc = this.dao.getCancelados(dataInicio, dataFinal);
 
             if (!listMvpc.isEmpty()) {
@@ -99,6 +111,10 @@ public class RelatoriosDelphiService extends ServiceBase {
             RelatoriosDelphiDto relDelphi = new RelatoriosDelphiDto();
             Date dataInicio = DocumentoUtils.parseData(dataIni);
             Date dataFinal = DocumentoUtils.parseData(dataFim);
+
+            if (dataInicio.after(dataFinal)) {
+                throw new Exception("Data inicial não pode ser maior que a data final.");
+            }
 
             List<VendComissoes> listVendCom = this.dao.getVendedores(dataInicio, dataFinal);
 
@@ -126,9 +142,9 @@ public class RelatoriosDelphiService extends ServiceBase {
             Date dataInicio = DocumentoUtils.parseData(dataIni);
             Date dataFinal = DocumentoUtils.parseData(dataFim);
 
-//            if (dataInicio.after(dataFinal)) {
-//                throw new Exception("Data inicial não pode ser maior que a data final.");
-//            }
+            if (dataInicio.after(dataFinal)) {
+                throw new Exception("Data inicial não pode ser maior que a data final.");
+            }
 
             List<PendFin> listPendFin = this.dao.getRelPendFin(dataInicio, dataFinal, status, pagarReceber, tipoEnt, codEnt, pendente);
             if (!listPendFin.isEmpty()) {
@@ -147,6 +163,10 @@ public class RelatoriosDelphiService extends ServiceBase {
             RelatoriosDelphiDto relDelphi = new RelatoriosDelphiDto();
             Date dataInicio = DocumentoUtils.parseData(dataIni);
             Date dataFinal = DocumentoUtils.parseData(dataFim);
+
+            if (dataInicio.after(dataFinal)) {
+                throw new Exception("Data inicial não pode ser maior que a data final.");
+            }
 
             List<ProdVend> listProdVend = this.dao.getRelProdVend(dataInicio, dataFinal);
             if (!listProdVend.isEmpty()) {
@@ -202,6 +222,49 @@ public class RelatoriosDelphiService extends ServiceBase {
             return null;
         } catch (Exception e) {
             throw new NullPointerException("Erro realizando a regra de negócio do relatório unitário de vendedores: " + e.getMessage());
+        }
+    }
+
+    public RelatoriosDelphiDto getRelatorioProdutosComprados(String dataInicial, String dataFinal) throws Exception {
+        try {
+            RelatoriosDelphiDto relDelphi = new RelatoriosDelphiDto();
+            Date dataIni = DocumentoUtils.parseData(dataInicial);
+            Date dataFim = DocumentoUtils.parseData(dataFinal);
+            List<ProdutosMovimentacoes> prodMovList = this.dao.getRelProdComprados(dataIni, dataFim);
+
+            if (dataIni.after(dataFim)) {
+                throw new Exception("Data inicial não pode ser maior que a data final.");
+            }
+
+
+            if (!prodMovList.isEmpty()) {
+                relDelphi.setRelatorioMovimentacoesProdutos(prodMovList.stream().map(ProdutosMovimentacoesDto::new).toList());
+                return relDelphi;
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro realizando a regra de negócio do relatório de produtos comprados: " + e.getMessage());
+        }
+    }
+
+    public RelatoriosDelphiDto getRelatorioDocBaixados(String dataIni, String dataFim) throws Exception {
+        try {
+            RelatoriosDelphiDto relDelphi = new RelatoriosDelphiDto();
+            Date dataInicio = DocumentoUtils.parseData(dataIni);
+            Date dataFinal = DocumentoUtils.parseData(dataFim);
+
+            if (dataInicio.after(dataFinal)) {
+                throw new Exception("Data inicial não pode ser maior que a data final.");
+            }
+
+            List<PendFin> listPendFin = this.dao.getRelDocBx(dataInicio, dataFinal);
+            if (!listPendFin.isEmpty()) {
+                relDelphi.setRelatorioMovimentacoesPendFin(listPendFin.stream().map(PendFinDto::new).toList());
+                return relDelphi;
+            }
+            return null;
+        } catch (Exception e) {
+            throw new NullPointerException("Erro realizando a regra de negócio do relatório de documentos baixados: " + e.getMessage());
         }
     }
 }

@@ -1,7 +1,5 @@
 package br.com.rpinfo.lorenzo.core.domain.repositories.relatoriosDelphi;
 
-import br.com.rpinfo.lorenzo.core.application.dto.MovProdutosDetDto;
-import br.com.rpinfo.lorenzo.core.application.dto.VendComissoesDto;
 import br.com.rpinfo.lorenzo.core.domain.model.entity.*;
 import br.framework.classes.DataBase.QueryBuilder;
 import br.framework.classes.DataBase.Repository;
@@ -11,14 +9,14 @@ import java.util.Date;
 import java.util.List;
 
 public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiDao {
-    public RelatoriosDelphiImp(IConnection connection){
+    public RelatoriosDelphiImp(IConnection connection) {
         super(connection, RelatoriosDelphiDao.class);
         this.getManager().setProcessNullToDefaultValues(false);
     }
 
     @Override
-    public List<MovProdutosC> getEntradas(Date dataIni, Date dataFim) throws Exception{
-        try{
+    public List<MovProdutosC> getEntradas(Date dataIni, Date dataFim) throws Exception {
+        try {
             QueryBuilder sql = QueryBuilder.create(this.getConnection())
                     .select("*")
                     .from(MovProdutosC.class)
@@ -36,8 +34,8 @@ public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiD
     }
 
     @Override
-    public List<MovProdutosC> getSaidas(Date dataInicial, Date dataFinal) throws Exception{
-        try{
+    public List<MovProdutosC> getSaidas(Date dataInicial, Date dataFinal) throws Exception {
+        try {
             QueryBuilder sql = QueryBuilder.create(this.getConnection())
                     .select("*")
                     .from(MovProdutosC.class)
@@ -55,8 +53,8 @@ public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiD
     }
 
     @Override
-    public List<MovProdutosC> getCancelados(Date dataInicial, Date dataFinal) throws Exception{
-        try{
+    public List<MovProdutosC> getCancelados(Date dataInicial, Date dataFinal) throws Exception {
+        try {
             QueryBuilder sql = QueryBuilder.create(this.getConnection())
                     .select("*")
                     .from(MovProdutosC.class)
@@ -74,8 +72,8 @@ public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiD
     }
 
     @Override
-    public List<VendComissoes> getVendedores(Date dataInicial, Date dataFinal) throws Exception{
-        try{
+    public List<VendComissoes> getVendedores(Date dataInicial, Date dataFinal) throws Exception {
+        try {
             QueryBuilder sql = QueryBuilder.create(this.getConnection())
                     .select("vend_codigo, vend_nome, vend_comissao, mvpc_status AS status, mvpc_es AS es, SUM(mvpc_totaldcto) AS soma")
                     .from(MovProdutosC.class)
@@ -93,30 +91,48 @@ public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiD
 
     @Override
     public List<PendFin> getRelPendFin(Date dataInicial, Date dataFinal, String status, String pagarReceber, String tipoEnt, Integer codEnt, String pendente) throws Exception {
-        try{
+        try {
             tipoEnt = String.valueOf(tipoEnt.charAt(0));
-            QueryBuilder sql = QueryBuilder.create(this.getConnection())
-                    .select("*")
-                    .from(PendFin.class)
-                    .leftJoin(Cliente.class, "pfin_codentidade = clie_codigo")
-                    .leftJoin(Fornecedores.class, "pfin_codentidade = forn_codigo")
-                    .where("pfin_datavcto", ">=", dataInicial)
-                    .and("pfin_datavcto", "<=", dataFinal)
-                    .and("pfin_status", "=", status)
-                    .and("pfin_tipo", "=", pagarReceber)
-                    .and("pfin_catentidade", "=", tipoEnt)
-                    .and("pfin_codentidade", "=", codEnt)
-                    .orderBy("pfin_transacao");
-
-            return this.getManager().queryFactory(sql.build(), PendFin.class);
+            if (pendente.equals("S")) {
+                QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                        .select("*")
+                        .from(PendFin.class)
+                        .leftJoin(Cliente.class, "pfin_codentidade = clie_codigo")
+                        .leftJoin(Fornecedores.class, "pfin_codentidade = forn_codigo")
+                        .where("pfin_datavcto", ">=", dataInicial)
+                        .and("pfin_datavcto", "<=", dataFinal)
+                        .and("pfin_status", "=", status)
+                        .and("pfin_tipo", "=", pagarReceber)
+                        .and("pfin_catentidade", "=", tipoEnt)
+                        .and("pfin_codentidade", "=", codEnt)
+                        .and("pfin_databaixa").isNull()
+                        .orderBy("pfin_transacao");
+                return this.getManager().queryFactory(sql.build(), PendFin.class);
+            } else if (pendente.equals("N")){
+                QueryBuilder sql2 = QueryBuilder.create(this.getConnection())
+                        .select("*")
+                        .from(PendFin.class)
+                        .leftJoin(Cliente.class, "pfin_codentidade = clie_codigo")
+                        .leftJoin(Fornecedores.class, "pfin_codentidade = forn_codigo")
+                        .where("pfin_datavcto", ">=", dataInicial)
+                        .and("pfin_datavcto", "<=", dataFinal)
+                        .and("pfin_status", "=", status)
+                        .and("pfin_tipo", "=", pagarReceber)
+                        .and("pfin_catentidade", "=", tipoEnt)
+                        .and("pfin_codentidade", "=", codEnt)
+                        .and("pfin_databaixa").isNotNull()
+                        .orderBy("pfin_transacao");
+                return this.getManager().queryFactory(sql2.build(), PendFin.class);
+            }
+            return null;
         } catch (Exception e) {
             throw new RuntimeException("Erro na query das pendências financeiras na data especificada: " + e.getMessage());
         }
     }
 
     @Override
-    public List<ProdVend> getRelProdVend(Date dataInicial, Date dataFinal) throws Exception{
-        try{
+    public List<ProdVend> getRelProdVend(Date dataInicial, Date dataFinal) throws Exception {
+        try {
             QueryBuilder sql = QueryBuilder.create(this.getConnection())
                     .select("mvpd_qtde, prod_codigo, mvpc_es, " +
                             "prod_descricao, prod_marca, prod_preconvenda, " +
@@ -140,7 +156,7 @@ public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiD
 
     @Override
     public MovProdutosC getRelTransacao(String transacao) throws Exception {
-        try{
+        try {
             MovProdutosC movC = null;
             QueryBuilder sql = QueryBuilder.create(this.getConnection())
                     .select("*")
@@ -151,7 +167,7 @@ public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiD
                     .where("mvpc_transacao", "=", transacao);
 
             List<MovProdutosC> lista = this.getManager().queryFactory(sql.build(), MovProdutosC.class);
-            if(!lista.isEmpty()){
+            if (!lista.isEmpty()) {
                 movC = lista.get(0);
                 List<MovProdutosD> itens = this.getListMovimentacoesD(transacao);
                 movC.setItens(itens);
@@ -176,8 +192,8 @@ public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiD
     }
 
     @Override
-    public MovProdutosC getRelUnitVendedores(Integer codVendedor) throws Exception{
-        try{
+    public MovProdutosC getRelUnitVendedores(Integer codVendedor) throws Exception {
+        try {
             MovProdutosC movC = null;
             QueryBuilder sql = QueryBuilder.create(this.getConnection())
                     .select("*")
@@ -189,7 +205,7 @@ public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiD
                     .orderBy("mvpc_vend_codigo");
 
             List<MovProdutosC> lista = this.getManager().queryFactory(sql.build(), MovProdutosC.class);
-            if(!lista.isEmpty()) {
+            if (!lista.isEmpty()) {
                 movC = lista.get(0);
             }
             return movC;
@@ -198,14 +214,57 @@ public class RelatoriosDelphiImp extends Repository implements RelatoriosDelphiD
         }
     }
 
-//    @Override
-//    public List<Vendedores> getVendedoresMovimentacoes(String transacao) throws Exception {
-//        try {
+    @Override
+    public List<ProdutosMovimentacoes> getRelProdComprados(Date dataInicial, Date dataFinal) {
+        try {
+            ProdutosMovimentacoes prodMov = null;
+            QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                    .select("mvpd_qtde AS qtde, prod_codigo AS codigo, mvpc_es, " +
+                            "prod_descricao AS descricao, prod_marca AS marca, prod_precocompra AS precoCompra, " +
+                            "mvpc_datamvto AS dataMvto, SUM(mvpd_valortotal) AS total")
+                    .from(Produtos.class)
+                    .innerJoin(MovProdutosD.class, "prod_codigo = mvpd_prod_codigo")
+                    .innerJoin(MovProdutosC.class, "mvpc_transacao = mvpd_transacao")
+                    .where("mvpc_datamvto").between(dataInicial, dataFinal)
+                    .and("mvpc_status", "=", "N")
+                    .and("mvpc_es", "=", "E")
+                    .groupBy("mvpd_qtde, prod_codigo, mvpc_es, " +
+                            "prod_descricao, prod_marca, prod_precocompra, " +
+                            "mvpc_datamvto")
+                    .orderBy("prod_codigo");
 
-//
-//            return this.getManager().queryFactory(sql2.build(), Vendedores.class);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Erro na query de busca dos vendedores: " + e.getMessage());
-//        }
-//    }
+            List<ProdutosMovimentacoes> lista = this.getManager().queryFactory(sql.build(), ProdutosMovimentacoes.class);
+            Double calculo = 0.0;
+            if (!lista.isEmpty()) {
+                for (int i = 0; i < lista.size(); i++) {
+                    prodMov = lista.get(i);
+                    calculo = prodMov.getPrecoCompra().getValue() * prodMov.getQtde().getValue();
+                    prodMov.getTotal().setValue(calculo);
+                    prodMov.getCalculo().setValue(calculo);
+                    lista.set(i, prodMov);
+                }
+            }
+            return lista;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro na query de busca do relatório de produtos comprados: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<PendFin> getRelDocBx(Date dataInicial, Date dataFinal) throws Exception {
+        try {
+            QueryBuilder sql = QueryBuilder.create(this.getConnection())
+                    .select("*")
+                    .from(PendFin.class)
+                    .leftJoin(Cliente.class, "pfin_codentidade = clie_codigo")
+                    .leftJoin(Fornecedores.class, "pfin_codentidade = forn_codigo")
+                    .where("pfin_databaixa").between(dataInicial, dataFinal)
+                    .and("pfin_status", "=", "N")
+                    .orderBy("pfin_transacao");
+
+            return this.getManager().queryFactory(sql.build(), PendFin.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro na query de busca do relatório unitário de vendedores: " + e.getMessage());
+        }
+    }
 }

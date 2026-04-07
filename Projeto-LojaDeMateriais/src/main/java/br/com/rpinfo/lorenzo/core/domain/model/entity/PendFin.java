@@ -26,6 +26,7 @@ public class PendFin extends EntityClass implements Serializable {
     private Decimal parcela = new Decimal(true);
     private Data datavcto = new Data(true);
     private Descricao origem = new Descricao(true);
+    private Data databaixa = new Data(true);
 
     public PendFin() { super(); }
 
@@ -43,6 +44,7 @@ public class PendFin extends EntityClass implements Serializable {
         pfinDto.setParcela(this.getParcela().getValue());
         pfinDto.setDatavcto(this.getDatavcto().getValue());
         pfinDto.setOrigem(this.getOrigem().getValue());
+        pfinDto.setDatabaixa(this.getDatabaixa().getValue());
         return pfinDto;
     }
 }

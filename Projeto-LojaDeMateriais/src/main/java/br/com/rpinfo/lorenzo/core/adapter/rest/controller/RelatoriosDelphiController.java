@@ -52,4 +52,14 @@ public class RelatoriosDelphiController {
     public Response getRelUniVendedor(@RequestParam(required = false) Integer codVendedor, @PathVariable String version) throws ValidationException {
         return RelatoriosDelphiUseCase.getRelUnitVend(codVendedor, MethodVersion.fromValue(version));
     }
+
+    @GetMapping("/{version}/relatoriosdelphi/relprodutoscomprados")
+    public Response getRelProdComp(@RequestParam(required = false) String dataInicio, @RequestParam(required = false) String dataFim, @PathVariable String version) throws ValidationException {
+        return RelatoriosDelphiUseCase.getRelProdComprados(dataInicio, dataFim, MethodVersion.fromValue(version));
+    }
+
+    @GetMapping("/{version}/relatoriosdelphi/reldocbx")
+    public Response getRelDocBx(@RequestParam(required = false) String dataInicio, @RequestParam(required = false) String dataFim, @PathVariable String version) throws ValidationException {
+        return RelatoriosDelphiUseCase.getRelDocumentosBx(dataInicio, dataFim, MethodVersion.fromValue(version));
+    }
 }

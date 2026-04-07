@@ -131,4 +131,34 @@ public class RelatoriosDelphiUseCase extends RelatoriosDelphiService {
             }
         }
     }
+    public static Response getRelProdComprados(String dataIni, String dataFim, MethodVersion methodVersion) throws ValidationException {
+        IConnection connection = null;
+        RelatoriosDelphiService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new RelatoriosDelphiService(connection);
+            return ResponseHandler.ok(business.getRelatorioProdutosComprados(dataIni, dataFim), methodVersion);
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao buscar relatório de produtos comprados: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+    public static Response getRelDocumentosBx(String dataIni, String dataFim, MethodVersion methodVersion) throws ValidationException {
+        IConnection connection = null;
+        RelatoriosDelphiService business;
+        try {
+            connection = ConnectionManager.newConnection();
+            business = new RelatoriosDelphiService(connection);
+            return ResponseHandler.ok(business.getRelatorioDocBaixados(dataIni, dataFim), methodVersion);
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao buscar relatório de documentos baixados: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
 }

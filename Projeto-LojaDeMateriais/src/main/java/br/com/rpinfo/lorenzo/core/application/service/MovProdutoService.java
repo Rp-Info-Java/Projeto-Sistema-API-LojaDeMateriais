@@ -1,5 +1,7 @@
 package br.com.rpinfo.lorenzo.core.application.service;
 
+import br.com.rpinfo.lorenzo.core.domain.repositories.cliente.ClienteDao;
+import br.com.rpinfo.lorenzo.core.domain.repositories.cliente.ClienteDaoImp;
 import br.framework.interfaces.IConnection;
 import com.google.common.base.Strings;
 import br.com.rpinfo.lorenzo.core.application.dto.ConfiguracoesDto;
@@ -31,6 +33,7 @@ public class MovProdutoService extends ServiceBase {
     private FornecedoresDao daoForn;
     private VendedoresDao daoVen;
     private ProdutoDao daoProd;
+    private ClienteDao daoClie;
 
     public MovProdutoService(IConnection connection) {
         super(connection);
@@ -38,11 +41,12 @@ public class MovProdutoService extends ServiceBase {
         this.daoForn = new FornecedoresDaoImp(connection);
         this.daoVen = new VendedoresDaoImp(connection);
         this.daoProd = new ProdutoDaoImp(connection);
+        this.daoClie = new ClienteDaoImp(connection);
     }
 
     // ENDPOINT PARA REALIZAR insert de MOVSAIDAS NO DELPHI //
     public String addSaidasDelphi(MovProdutosCabDto mvpcDto, ConfiguracoesDto config) throws Exception {
-        Fornecedores forn = this.daoForn.getFornecedor(mvpcDto.getCodigoEntidade());
+        Cliente clie = this.daoClie.getCliente(mvpcDto.getCodigoEntidade());
         Vendedores vend = this.daoVen.getVendedor(mvpcDto.getCodigoVendedor());
         try {
             if (mvpcDto == null) {
@@ -51,12 +55,11 @@ public class MovProdutoService extends ServiceBase {
 
             MovProdutosC mvpc = mvpcDto.toEntity();
 
-            if (forn != null) {
-                if (DocumentoUtils.validarImpedimento(config, forn.getSituacao().getValue())) {
-                    mvpc.getCodentidade().setValue(forn.getCodigo().getValue());
-                    //mvpc.getTipoentidade().setValue(forn.getTipo().getValue());
+            if (clie != null) {
+                if (DocumentoUtils.validarImpedimento(config, clie.getSituacao().getValue())) {
+                    mvpc.getCodentidade().setValue(clie.getCodigo().getValue());
                 } else {
-                    return null; //Garante que, caso o fornecedor esteja impedido, a movimentação não seja inserida.
+                    return null; //Garante que, caso o clieente esteja impedido, a movimentação não seja inserida.
                 }
                 if (vend != null) {
                     mvpc.getVend_codigo().setValue(vend.getCodigo().getValue());

@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FormasPagamentoDao{
-    FormasPagamento getFormasPagamento(String codigo) throws Exception;
+    FormasPagamento getFormasPagamento(Integer codigo) throws Exception;
 }
